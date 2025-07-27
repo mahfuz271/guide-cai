@@ -19,8 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'avatar',
+        'role',
+        'status',
         'email',
+        'avatar',
         'password',
     ];
 
@@ -51,8 +53,6 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        return $this->avatar
-        ? asset('storage/avatars/' . $this->avatar)
-        : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+        return $this->avatar ? asset('storage/avatars/' . $this->avatar) : null;
     }
 }
