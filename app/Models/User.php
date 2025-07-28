@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'avatar',
         'password',
+        'phone',
+        'location',
     ];
 
     /**
@@ -49,6 +51,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function guideProfile()
+    {
+        return $this->hasOne(GuideProfile::class);
     }
 
     public function getAvatarUrlAttribute()

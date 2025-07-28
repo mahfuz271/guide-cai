@@ -13,8 +13,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
-
     Route::post('register', [RegisteredUserController::class, 'store']);
+
+    Route::get('guide-register', [RegisteredUserController::class, 'createGuide'])
+            ->name('guide-register');
+    Route::post('guide-register', [RegisteredUserController::class, 'storeGuide']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

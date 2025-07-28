@@ -16,9 +16,8 @@ import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     { title: 'Home', href: '/' },
+    { title: 'Find Guides', href: '/guides' },
     { title: 'Explore', href: '/explore' },
-    { title: 'Trip Planner', href: '/trip-planner' },
-    { title: 'Guides', href: '/guides' },
     { title: 'About', href: '/about' },
     { title: 'Dashboard', href: '/dashboard' },
 ];
@@ -171,11 +170,21 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                         Sign Up
                                     </Button>
                                 </Link>
+                                <Link href={route('guide-register')}>
+                                    <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/50 cursor-pointer">
+                                        Become a Guide
+                                    </Button>
+                                </Link>
                             </>
                         )}
                     </div>
                 </div>
             </div>
+            {auth.user && auth.user.status == 'pending' && (
+                <div className="mb-6 rounded border border-yellow-400 bg-yellow-50 px-4 py-3 text-yellow-700 text-center">
+                    Your account is currently under review. We will notify you once it is approved.
+                </div>
+            )}
             {breadcrumbs.length > 1 && (
                 <div className="border-sidebar-border/70 flex w-full border-b">
                     <div className="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl">
