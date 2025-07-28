@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Clock, Compass, MapPin, Star, Users } from 'lucide-react';
+import { ArrowRight, Clock, Compass, Globe, Heart, MapPin, Star, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -46,25 +46,43 @@ export default function Welcome() {
 
     const features = [
         {
-            icon: Compass,
-            title: 'AI-Powered Planning',
-            description: 'Get personalized recommendations based on your preferences and travel style',
+            icon: Users,
+            title: 'Verified Local Guides',
+            description: 'Connect with experienced and trusted guides from around the world.',
         },
         {
-            icon: Users,
-            title: 'Local Insights',
-            description: 'Access cultural tips and authentic experiences from local experts',
+            icon: Compass,
+            title: 'Unique Local Tours',
+            description: 'Discover hidden gems and cultural experiences only locals know about.',
         },
         {
             icon: Clock,
-            title: 'Smart Scheduling',
-            description: 'Optimized itineraries that maximize your time and minimize travel stress',
+            title: 'Flexible Scheduling',
+            description: 'Book tours that fit your schedule—whether solo, group, or private.',
+        },
+    ];
+
+    const howItWorksSteps = [
+        {
+            icon: Globe,
+            title: 'Browse Guides',
+            description: 'Explore guides and tours in your destination of choice.',
+        },
+        {
+            icon: Heart,
+            title: 'Pick a Tour',
+            description: 'Select a tour based on your interest, time, and budget.',
+        },
+        {
+            icon: ArrowRight,
+            title: 'Book Instantly',
+            description: 'Reserve your spot with secure payments and instant confirmation.',
         },
     ];
 
     return (
         <AppHeaderLayout breadcrumbs={breadcrumbs}>
-            <Head title="Welcome" />
+            <Head title="Explore Guided Tours with Experts" />
 
             {/* Hero Section */}
             <section className="from-background via-primary/5 to-primary/10 relative overflow-hidden bg-gradient-to-br py-20 lg:py-32">
@@ -73,43 +91,42 @@ export default function Welcome() {
                     <div className="mx-auto max-w-4xl text-center">
                         <div className="bg-primary/10 border-primary/20 text-primary mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm backdrop-blur-sm">
                             <span className="bg-primary h-2 w-2 animate-pulse rounded-full"></span>
-                            AI-Powered Travel Intelligence
+                            Real Experiences by Real People
                         </div>
                         <h1 className="from-foreground via-primary to-foreground mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold leading-tight text-transparent md:text-6xl lg:text-7xl">
-                            Your Personal Travel Guide, Powered by AI
+                            Your Marketplace for Guided Tours
                         </h1>
                         <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg leading-relaxed md:text-xl">
-                            Guide Cai understands your travel style and creates personalized itineraries with local insights, cultural tips, and
-                            hidden gems you won't find anywhere else.
+                            Book authentic travel experiences with local tour guides who bring their destination to life.
                         </p>
                         <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
-                            <Link href="/trip-planner">
+                            <Link href="/tours">
                                 <Button
                                     size="lg"
-                                    className="from-primary to-primary/60 text-primary-foreground shadow-elegant hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
+                                    className="from-primary to-primary/60 text-primary-foreground hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
                                 >
-                                    Start Your Journey
+                                    Browse Tours
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
-                            <Link href="/explore">
+                            <Link href="/guides">
                                 <Button size="lg" variant="outline" className="border-primary/30 text-primary hover:bg-primary/50">
-                                    Explore Destinations
+                                    Meet the Guides
                                 </Button>
                             </Link>
                         </div>
                         <div className="mx-auto grid max-w-md grid-cols-3 gap-8 text-center">
                             <div>
-                                <div className="text-primary text-2xl font-bold">50K+</div>
-                                <div className="text-muted-foreground text-sm">Destinations</div>
+                                <div className="text-primary text-2xl font-bold">1000+</div>
+                                <div className="text-muted-foreground text-sm">Verified Guides</div>
                             </div>
                             <div>
-                                <div className="text-primary text-2xl font-bold">1M+</div>
-                                <div className="text-muted-foreground text-sm">Happy Travelers</div>
+                                <div className="text-primary text-2xl font-bold">10K+</div>
+                                <div className="text-muted-foreground text-sm">Unique Tours</div>
                             </div>
                             <div>
-                                <div className="text-primary text-2xl font-bold">24/7</div>
-                                <div className="text-muted-foreground text-sm">AI Support</div>
+                                <div className="text-primary text-2xl font-bold">95%</div>
+                                <div className="text-muted-foreground text-sm">5-Star Reviews</div>
                             </div>
                         </div>
                     </div>
@@ -121,10 +138,10 @@ export default function Welcome() {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-16 text-center">
                         <h2 className="from-foreground to-primary mb-6 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
-                            Travel Smarter with Guide Cai
+                            Why Choose Our Platform?
                         </h2>
                         <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
-                            Our AI doesn't just suggest destinations—it understands your travel DNA and crafts experiences that match your soul.
+                            We make travel personal again. Discover, connect, and explore with passionate locals in every corner of the world.
                         </p>
                     </div>
 
@@ -151,21 +168,47 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Featured Trips Section */}
+            {/* How It Works Section */}
+            <section className="bg-background py-20">
+                <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+                    <h2 className="from-foreground to-primary mb-6 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
+                        How It Works
+                    </h2>
+                    <p className="text-muted-foreground mx-auto mb-12 max-w-2xl text-lg">
+                        Planning your next adventure is easy. Just follow these simple steps to get started.
+                    </p>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                        {howItWorksSteps.map((step, index) => {
+                            const Icon = step.icon;
+                            return (
+                                <Card key={index} className="hover:border-primary/30 hover:shadow-elegant group transition-all duration-300">
+                                    <CardContent className="p-6 text-center">
+                                        <div className="bg-primary/10 mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full">
+                                            <Icon className="text-primary h-6 w-6" />
+                                        </div>
+                                        <h4 className="mb-2 text-xl font-semibold">{step.title}</h4>
+                                        <p className="text-muted-foreground text-sm">{step.description}</p>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* Featured Trips */}
             <section className="bg-background py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-12 flex items-end justify-between">
                         <div>
                             <h2 className="from-foreground to-primary mb-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
-                                AI-Curated Experiences
+                                Featured Tours
                             </h2>
-                            <p className="text-muted-foreground max-w-2xl text-lg">
-                                Every trip is crafted by our AI to match different travel personalities and interests
-                            </p>
+                            <p className="text-muted-foreground max-w-2xl text-lg">Handpicked guided experiences from across the globe.</p>
                         </div>
-                        <Link href="/explore">
+                        <Link href="/tours">
                             <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/50">
-                                View All Trips
+                                View All
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </Link>
@@ -210,38 +253,6 @@ export default function Welcome() {
                                 </CardContent>
                             </Card>
                         ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="from-primary/10 via-primary/5 to-background relative overflow-hidden bg-gradient-to-br py-20">
-                <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5"></div>
-                <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-                    <div className="bg-primary/10 border-primary/20 text-primary mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm backdrop-blur-sm">
-                        <span className="bg-primary h-2 w-2 animate-pulse rounded-full"></span>
-                        Join the AI Travel Revolution
-                    </div>
-                    <h2 className="from-foreground to-primary mb-6 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl lg:text-5xl">
-                        Your Next Adventure Awaits
-                    </h2>
-                    <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-                        Let Guide Cai's AI understand your travel dreams and transform them into unforgettable journeys tailored just for you.
-                    </p>
-                    <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                        <Link href="/trip-planner">
-                            <Button
-                                size="lg"
-                                className="from-primary to-primary/60 text-primary-foreground shadow-elegant hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
-                            >
-                                Start Planning for Free
-                            </Button>
-                        </Link>
-                        <Link href="/about">
-                            <Button size="lg" variant="outline" className="border-primary/30 text-primary hover:bg-primary/50">
-                                See How It Works
-                            </Button>
-                        </Link>
                     </div>
                 </div>
             </section>
