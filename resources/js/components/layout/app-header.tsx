@@ -18,7 +18,6 @@ const mainNavItems: NavItem[] = [
     { title: 'Home', href: '/' },
     { title: 'Find Guides', href: '/guides' },
     { title: 'Explore', href: '/explore' },
-    { title: 'About', href: '/about' },
     { title: 'Dashboard', href: '/dashboard' },
 ];
 

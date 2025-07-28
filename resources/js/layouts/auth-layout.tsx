@@ -8,8 +8,8 @@ export default function AuthLayout({ children, title, description, ...props }: {
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col items-center gap-4">
                             <div className="space-y-2 text-center">
-                                <h1 className="text-xl font-semibold">{title}</h1>
-                                <p className="text-muted-foreground text-center text-sm">{description}</p>
+                                <h1 className="text-xl md:text-2xl font-semibold">{title}</h1>
+                                <p className="text-muted-foreground text-center text-md">{description}</p>
                             </div>
                         </div>
                         {children}

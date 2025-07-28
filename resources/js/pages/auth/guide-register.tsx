@@ -100,7 +100,7 @@ export default function GuideRegister() {
                         <span className="bg-primary h-2 w-2 animate-pulse rounded-full"></span>
                         Join Our Guide Network
                     </div>
-                    <h1 className="from-foreground to-primary mb-4 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
+                    <h1 className="from-foreground to-primary mb-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
                         Become a Local Guide
                     </h1>
                     <p className="text-muted-foreground mx-auto mb-6 max-w-2xl text-lg">
