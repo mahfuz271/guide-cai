@@ -222,7 +222,7 @@ export default function Welcome() {
                             >
                                 <div className="from-primary/20 to-primary/5 relative aspect-video overflow-hidden bg-gradient-to-br">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                    <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm">
+                                    <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 dark:bg-black/90 px-2 py-1 backdrop-blur-sm">
                                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                                         <span className="text-xs font-medium">{trip.rating}</span>
                                     </div>

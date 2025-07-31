@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserEnum;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(protected UserRepository $userRepository)
+    {}
+
     /**
      * Show the registration page.
      */
@@ -32,11 +34,6 @@ class RegisteredUserController extends Controller
         return Inertia::render('auth/guide-register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -46,25 +43,13 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $validated['phone'] ?? null,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = $this->userRepository->createUser($request->all());
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard'));
     }
-
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
 
     public function storeGuide(Request $request): RedirectResponse
     {
@@ -72,8 +57,6 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-
-            // Additional validations for guide-specific fields
             'phone' => 'nullable|string|max:20',
             'location' => 'nullable|string|max:255',
             'hourlyRate' => 'required|numeric|min:0',
@@ -84,37 +67,15 @@ class RegisteredUserController extends Controller
             'specialties' => 'required|array|min:1',
             'specialties.*' => 'string|max:100',
             'photos' => 'nullable|array|max:4',
-            'photos.*' => 'nullable|image|max:2048', // max 2MB per photo
+            'photos.*' => 'nullable|image|max:2048',
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'role' => UserEnum::GUIDE,
-            'status' => UserEnum::STATUS_PENDING,
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'phone' => $validated['phone'] ?? null,
-            'location' => $validated['location'] ?? null,
-        ]);
+        // Attach uploaded photo files to $validated
+        $validated['photos'] = $request->file('photos');
 
-        $user->guideProfile()->create([
-            'hourly_rate' => $validated['hourlyRate'],
-            'experience' => $validated['experience'],
-            'bio' => $validated['bio'],
-            'languages' => json_encode($validated['languages']),
-            'specialties' => json_encode($validated['specialties']),
-        ]);
-
-        // Handle photo uploads if present
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('guide_photos', 'public');
-                $user->guideProfile->photos()->create(['path' => $path]);
-            }
-        }
+        $user = $this->userRepository->createGuideUser($validated);
 
         event(new Registered($user));
-
         Auth::login($user);
 
         return redirect()->intended(route('dashboard'));

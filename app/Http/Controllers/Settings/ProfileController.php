@@ -4,18 +4,28 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Repositories\UserRepository;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    protected UserRepository $userRepository;
+
     /**
-     * Show the user's profile settings page.
+     * Inject UserRepository dependency.
+     */
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
+    /**
+     * Display the profile settings page.
      */
     public function edit(Request $request): Response
     {
@@ -26,34 +36,23 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile settings.
+     * Update the authenticated user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
-        $user->fill($request->validated());
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
+        $this->userRepository->updateProfile(
+            $user,
+            $request->validated(),
+            $request->file('avatar')
+        );
 
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete('avatars/' . $user->avatar);
-            }
-
-            $filename = uniqid() . '.' . $request->file('avatar')->getClientOriginalExtension();
-            $request->file('avatar')->storeAs('avatars', $filename, 'public');
-            $user->avatar = $filename;
-        }
-
-        $user->save();
-
-        return to_route('profile.edit');
+        return to_route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
-     * Delete the user's account.
+     * Delete the authenticated user's account.
      */
     public function destroy(Request $request): RedirectResponse
     {
@@ -65,7 +64,7 @@ class ProfileController extends Controller
 
         Auth::logout();
 
-        $user->delete();
+        $this->userRepository->deleteUser($user);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

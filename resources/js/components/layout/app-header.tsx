@@ -14,13 +14,6 @@ import { Link, usePage } from '@inertiajs/react';
 import { Menu, Search } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-    { title: 'Home', href: '/' },
-    { title: 'Find Guides', href: '/guides' },
-    { title: 'Explore', href: '/explore' },
-    { title: 'Dashboard', href: '/dashboard' },
-];
-
 const rightNavItems: NavItem[] = [];
 
 const activeItemStyles = 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
@@ -33,6 +26,24 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();
+
+    const user = auth.user;
+
+    const mainNavItems: NavItem[] = [
+        { title: 'Home', href: '/' },
+        { title: 'Find Guides', href: '/guides' },
+        { title: 'Explore', href: '/explore' },
+    ];
+
+    if (user) {
+        if (user.role === 'admin') {
+            mainNavItems.push({ title: 'Dashboard', href: '/dashboard' });
+        } else if (user.role === 'guide') {
+            mainNavItems.push({ title: 'Dashboard', href: '/dashboard' });
+        } else if (user.role === 'user') {
+            mainNavItems.push({ title: 'My Bookings', href: '/bookings' });
+        }
+    }
     return (
         <>
             <div className="border-sidebar-border/80 border-b">
@@ -180,7 +191,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                 </div>
             </div>
             {auth.user && auth.user.status == 'pending' && (
-                <div className="mb-6 rounded border border-yellow-400 bg-yellow-50 px-4 py-3 text-yellow-700 text-center">
+                <div className="mb-2 rounded border border-yellow-400 bg-yellow-50 px-4 py-3 text-center text-yellow-700">
                     Your account is currently under review. We will notify you once it is approved.
                 </div>
             )}
