@@ -1,10 +1,11 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
-import AppearanceTabs from '@/components/settings/appearance-tabs';
 import HeadingSmall from '@/components/layout/heading-small';
-import { type BreadcrumbItem } from '@/types';
+import AppearanceTabs from '@/components/settings/appearance-tabs';
+import { SharedData, type BreadcrumbItem } from '@/types';
 
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -15,8 +16,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Appearance() {
+    const { auth } = usePage<SharedData>().props;
+    const isUser = auth.user.role === 'user';
+
+    const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+        return isUser ? (
+            <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth>
+                {children}
+            </AppHeaderLayout>
+        ) : (
+            <AppSidebarLayout>{children}</AppSidebarLayout>
+        );
+    };
+
     return (
-        <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth={true}>
+        <LayoutWrapper>
             <Head title="Appearance settings" />
 
             <SettingsLayout>
@@ -25,6 +39,6 @@ export default function Appearance() {
                     <AppearanceTabs />
                 </div>
             </SettingsLayout>
-        </AppHeaderLayout>
+        </LayoutWrapper>
     );
 }

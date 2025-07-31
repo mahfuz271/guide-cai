@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,8 +13,9 @@ class GuideController extends Controller
         return Inertia::render('guide/index');
     }
 
-    public function show(): Response
+    public function show(User $user): Response
     {
-        return Inertia::render('guide/single');
+        $user->load('guideProfile.photos');
+        return Inertia::render('guide/single', ['guide' => $user]);
     }
 }

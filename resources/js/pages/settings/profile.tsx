@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useInitials } from '@/hooks/use-initials';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -37,6 +38,18 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         avatar: null,
     });
 
+    const isUser = auth.user.role === 'user';
+
+    const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+        return isUser ? (
+            <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth>
+                {children}
+            </AppHeaderLayout>
+        ) : (
+            <AppSidebarLayout>{children}</AppSidebarLayout>
+        );
+    };
+
     transform((data: ProfileForm) => {
         const formData = new FormData();
         formData.append('name', data.name);
@@ -56,7 +69,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     };
 
     return (
-        <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth={true}>
+        <LayoutWrapper>
             <Head title="Profile settings" />
 
             <SettingsLayout>
@@ -79,7 +92,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 type="file"
                                 accept="image/*"
                                 onChange={(e) => setData('avatar', e.target.files?.[0] ?? null)}
-                                className="block w-full text-sm file:rounded file:border file:border-neutral-300 file:bg-neutral-100 file:px-2 file:py-1"
+                                className="dark:text-white block w-full text-sm file:rounded file:border file:border-neutral-300 file:bg-neutral-100 file:px-2 file:py-1"
                             />
 
                             <InputError className="mt-2" message={errors.avatar} />
@@ -158,6 +171,6 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                 <DeleteUser />
             </SettingsLayout>
-        </AppHeaderLayout>
+        </LayoutWrapper>
     );
 }

@@ -84,4 +84,17 @@ class UserRepository
 
         $user->delete();
     }
+
+    public function updateStatus(User $user, string $status): bool
+    {
+        if ($user->status == $status) {
+            return false;
+        }
+        $oldStatus = $user->status;
+        $user->status = $status;
+        $user->save();
+        // event(new UserStatusChanged($user, $oldStatus));
+
+        return true;
+    }
 }

@@ -1,40 +1,58 @@
-
 import { Head } from '@inertiajs/react';
+import { Award, Calendar as CalendarIcon, Clock, DollarSign, Languages, MapPin, MessageCircle, Star } from 'lucide-react';
 import { useState } from 'react';
-import { Award, Calendar as CalendarIcon, Camera, Clock, DollarSign, Languages, MapPin, MessageCircle, Star } from 'lucide-react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useInitials } from '@/hooks/use-initials';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
+import { User } from '@/types';
 
-const GuideProfile = () => {
+interface GuideProfileProps {
+    guide: User;
+}
+
+const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
+    const getInitials = useInitials();
 
-    // Mock guide data
-    const guide = {
-        id: '1',
-        name: 'Yuki Tanaka',
-        title: 'Cultural Heritage Expert',
-        location: 'Tokyo, Japan',
-        rating: 4.9,
-        reviews: 284,
-        totalGuides: 156,
-        hourlyRate: 45,
-        languages: ['Japanese', 'English', 'Mandarin'],
-        avatar: '/placeholder.svg',
-        specialties: ['Temples', 'Tea Ceremony', 'Traditional Arts', 'Historical Sites'],
-        bio: "Born and raised in Tokyo, I've spent over 8 years sharing the rich cultural heritage of Japan with travelers from around the world. My passion lies in connecting people with the traditional soul of Tokyo - from ancient temples to authentic tea ceremonies. I believe every visitor should experience the real Japan, not just the touristy spots.",
-        verified: true,
-        responseTime: 'Within 2 hours',
-        bookingRate: 98,
-        photos: ['/placeholder.svg', '/placeholder.svg', '/placeholder.svg', '/placeholder.svg'],
-    };
+    if (!guide) {
+        return <div>Guide not found.</div>;
+    }
+
+    // Check guide status
+    if (guide.status === 'blocked') {
+        return (
+            <AppHeaderLayout maxWidth>
+                <Head title="Guide Blocked" />
+                <div className="p-8 text-center text-red-600">
+                    <h1 className="text-2xl font-bold">This guide is currently blocked.</h1>
+                    <p>Please contact support for more information.</p>
+                </div>
+            </AppHeaderLayout>
+        );
+    }
+
+    if (guide.status === 'pending') {
+        return (
+            <AppHeaderLayout maxWidth>
+                <Head title="Guide Pending Approval" />
+                <div className="p-8 text-center text-yellow-600">
+                    <h1 className="text-2xl font-bold">This guide's profile is pending approval.</h1>
+                    <p>We are reviewing the profile and will update you soon.</p>
+                </div>
+            </AppHeaderLayout>
+        );
+    }
+
+    // Extract guideProfile for easier access
+    const profile = guide.guideProfile || {};
 
     const reviews = [
         {
@@ -86,7 +104,7 @@ const GuideProfile = () => {
 
     return (
         <AppHeaderLayout maxWidth>
-            <Head title="Guide" />
+            <Head title={`Guide - ${guide.name}`} />
             <div className="px-4 py-8">
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     <div className="space-y-6 lg:col-span-2">
@@ -95,11 +113,9 @@ const GuideProfile = () => {
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-6">
                                     <Avatar className="h-24 w-24">
+                                        <AvatarImage src={guide.avatar_url} alt={guide.name} />
                                         <AvatarFallback className="from-primary/20 to-primary/5 bg-gradient-to-br text-2xl">
-                                            {guide.name
-                                                .split(' ')
-                                                .map((n) => n[0])
-                                                .join('')}
+                                            {getInitials(guide.name)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className="flex-1">
@@ -107,14 +123,14 @@ const GuideProfile = () => {
                                             <div>
                                                 <div className="mb-1 flex items-center gap-2">
                                                     <h1 className="text-2xl font-bold">{guide.name}</h1>
-                                                    {guide.verified && (
+                                                    {guide?.verified && (
                                                         <Badge className="bg-primary/10 text-primary border-primary/20">
                                                             <Award className="mr-1 h-3 w-3" />
                                                             Verified
                                                         </Badge>
                                                     )}
                                                 </div>
-                                                <p className="text-primary text-lg font-medium">{guide.title}</p>
+                                                <p className="text-primary text-lg font-medium">{profile.title}</p>
                                                 <div className="text-muted-foreground flex items-center gap-1">
                                                     <MapPin className="h-4 w-4" />
                                                     <span>{guide.location}</span>
@@ -126,26 +142,26 @@ const GuideProfile = () => {
                                             <div className="text-center">
                                                 <div className="mb-1 flex items-center justify-center gap-1">
                                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                                    <span className="font-semibold">{guide.rating}</span>
+                                                    <span className="font-semibold">{profile.rating ?? 0}</span>
                                                 </div>
-                                                <p className="text-muted-foreground text-xs">{guide.reviews} reviews</p>
+                                                <p className="text-muted-foreground text-xs">{profile.reviews_count ?? 0} reviews</p>
                                             </div>
                                             <div className="text-center">
-                                                <div className="mb-1 font-semibold">{guide.totalGuides}</div>
+                                                <div className="mb-1 font-semibold">{profile.total_guides ?? 0}</div>
                                                 <p className="text-muted-foreground text-xs">tours completed</p>
                                             </div>
                                             <div className="text-center">
-                                                <div className="mb-1 font-semibold">{guide.responseTime}</div>
+                                                <div className="mb-1 font-semibold">{profile.response_time ?? '-'}</div>
                                                 <p className="text-muted-foreground text-xs">response time</p>
                                             </div>
                                             <div className="text-center">
-                                                <div className="mb-1 font-semibold">{guide.bookingRate}%</div>
+                                                <div className="mb-1 font-semibold">{profile.booking_rate ?? 0}%</div>
                                                 <p className="text-muted-foreground text-xs">booking rate</p>
                                             </div>
                                         </div>
 
                                         <div className="mb-4 flex flex-wrap gap-2">
-                                            {guide.languages.map((language) => (
+                                            {(profile.languages ?? []).map((language) => (
                                                 <Badge key={language} variant="outline" className="border-primary/20 text-primary/80">
                                                     <Languages className="mr-1 h-3 w-3" />
                                                     {language}
@@ -154,7 +170,7 @@ const GuideProfile = () => {
                                         </div>
 
                                         <div className="flex flex-wrap gap-2">
-                                            {guide.specialties.map((specialty) => (
+                                            {(profile.specialties ?? []).map((specialty) => (
                                                 <Badge key={specialty} variant="outline" className="border-primary/20 text-primary/80">
                                                     {specialty}
                                                 </Badge>
@@ -179,7 +195,7 @@ const GuideProfile = () => {
                                         <CardTitle>About {guide.name}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <p className="text-muted-foreground leading-relaxed">{guide.bio}</p>
+                                        <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
                                     </CardContent>
                                 </Card>
                             </TabsContent>
@@ -242,12 +258,9 @@ const GuideProfile = () => {
 
                             <TabsContent value="photos">
                                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                                    {guide.photos.map((photo, index) => (
-                                        <div
-                                            key={index}
-                                            className="from-primary/20 to-primary/5 border-primary/20 flex aspect-square items-center justify-center rounded-lg border bg-gradient-to-br"
-                                        >
-                                            <Camera className="text-primary/50 h-8 w-8" />
+                                    {guide?.guideProfile?.photos?.map((photo, index) => (
+                                        <div key={index} className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
+                                            <img src={photo.full_path} alt={`Guide photo ${index + 1}`} className="h-full w-full object-cover" />
                                         </div>
                                     ))}
                                 </div>
@@ -260,10 +273,9 @@ const GuideProfile = () => {
                         <Card className="border-primary/20 from-primary/5 sticky top-24 bg-gradient-to-br to-transparent">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <CalendarIcon className="text-primary h-5 w-5" />
-                                    Book {guide.name}
+                                    <CalendarIcon className="text-primary h-5 w-5" /> Book {guide.name}
                                 </CardTitle>
-                                <div className="text-primary text-2xl font-bold">${guide.hourlyRate}/hour</div>
+                                <div className="text-primary text-2xl font-bold">${profile.hourly_rate ?? 0}/hour</div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>

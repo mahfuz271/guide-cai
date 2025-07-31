@@ -23,14 +23,24 @@ export function AppSidebar() {
     if (user?.role === 'admin') {
         mainNavItems.push(
             {
+                title: 'User Approvals',
+                href: '/admin/approvals',
+                icon: UserCheck,
+            },
+            {
                 title: 'Manage Guides',
                 href: '/admin/guides',
                 icon: Users,
             },
             {
-                title: 'User Approvals',
-                href: '/admin/approvals',
-                icon: UserCheck,
+                title: 'Manage Users',
+                href: '/admin/users',
+                icon: Users,
+            },
+            {
+                title: 'Manage Admins',
+                href: '/admin/admin-users',
+                icon: Users,
             },
             {
                 title: 'Marketplace Settings',

@@ -1,15 +1,16 @@
 import InputError from '@/components/layout/input-error';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { type BreadcrumbItem } from '@/types';
+import { SharedData, type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
 
 import HeadingSmall from '@/components/layout/heading-small';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,6 +20,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Password() {
+    const { auth } = usePage<SharedData>().props;
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
@@ -27,6 +29,18 @@ export default function Password() {
         password: '',
         password_confirmation: '',
     });
+
+    const isUser = auth.user.role === 'user';
+
+    const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
+        return isUser ? (
+            <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth>
+                {children}
+            </AppHeaderLayout>
+        ) : (
+            <AppSidebarLayout>{children}</AppSidebarLayout>
+        );
+    };
 
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
@@ -49,7 +63,7 @@ export default function Password() {
     };
 
     return (
-        <AppHeaderLayout breadcrumbs={breadcrumbs} maxWidth={true}>
+        <LayoutWrapper>
             <Head title="Password settings" />
 
             <SettingsLayout>
@@ -123,6 +137,6 @@ export default function Password() {
                     </form>
                 </div>
             </SettingsLayout>
-        </AppHeaderLayout>
+        </LayoutWrapper>
     );
 }
