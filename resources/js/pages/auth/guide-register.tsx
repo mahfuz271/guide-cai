@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/text-area';
+import { LANGUAGE_OPTIONS, SPECIALTY_OPTIONS } from '@/constants/guide-options';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 
 type RegisterForm = {
@@ -28,37 +29,6 @@ type RegisterForm = {
 };
 
 export default function GuideRegister() {
-    const specialtyOptions = [
-        'Cultural Heritage',
-        'Food & Dining',
-        'Adventure Tourism',
-        'Historical Sites',
-        'Art & Museums',
-        'Shopping',
-        'Nightlife',
-        'Nature & Parks',
-        'Religious Sites',
-        'Architecture',
-        'Local Markets',
-        'Photography',
-        'Transportation',
-    ];
-
-    const languageOptions = [
-        'English',
-        'Spanish',
-        'French',
-        'German',
-        'Italian',
-        'Portuguese',
-        'Japanese',
-        'Korean',
-        'Mandarin',
-        'Arabic',
-        'Russian',
-        'Hindi',
-    ];
-
     const [photoPreviews, setPhotoPreviews] = useState<string[]>(['', '', '', '']);
 
     const { data, setData, post, processing, errors, reset, transform } = useForm<Required<RegisterForm>>({
@@ -264,7 +234,7 @@ export default function GuideRegister() {
                                             Languages Spoken <span className="text-red-500">*</span>
                                         </Label>
                                         <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-3">
-                                            {languageOptions.map((language) => (
+                                            {LANGUAGE_OPTIONS.map((language) => (
                                                 <div key={language} className="flex items-center space-x-2">
                                                     <Checkbox
                                                         id={language}
@@ -286,7 +256,7 @@ export default function GuideRegister() {
                                             Specialties <span className="text-red-500">*</span>
                                         </Label>
                                         <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-                                            {specialtyOptions.map((specialty) => (
+                                            {SPECIALTY_OPTIONS.map((specialty) => (
                                                 <div key={specialty} className="flex items-center space-x-2">
                                                     <Checkbox
                                                         id={specialty}

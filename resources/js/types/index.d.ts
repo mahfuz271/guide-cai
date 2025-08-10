@@ -27,6 +27,12 @@ interface FlashMessages {
     error?: string;
 }
 
+export interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
 export interface SharedData {
     name: string;
     quote: { message: string; author: string };
@@ -48,7 +54,7 @@ export interface User {
     email_verified_at: string | null;
     status: 'active' | 'blocked' | 'pending';
     verified?: boolean;
-    guideProfile?: GuideProfileData;
+    guide_profile?: GuideProfileData;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...

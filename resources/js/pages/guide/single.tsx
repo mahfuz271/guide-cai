@@ -51,8 +51,8 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
         );
     }
 
-    // Extract guideProfile for easier access
-    const profile = guide.guideProfile || {};
+    // Extract guide_profile for easier access
+    const profile = guide.guide_profile || {};
 
     const reviews = [
         {
@@ -258,7 +258,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
 
                             <TabsContent value="photos">
                                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                                    {guide?.guideProfile?.photos?.map((photo, index) => (
+                                    {guide?.guide_profile?.photos?.map((photo, index) => (
                                         <div key={index} className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
                                             <img src={photo.full_path} alt={`Guide photo ${index + 1}`} className="h-full w-full object-cover" />
                                         </div>

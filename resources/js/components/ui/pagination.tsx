@@ -1,11 +1,7 @@
 import React from "react";
 import { router } from "@inertiajs/react";
+import { PaginationLink } from "@/types";
 
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
 
 interface PaginationProps {
     links: PaginationLink[];
