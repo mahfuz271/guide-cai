@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GuideController;
+use App\Http\Controllers\TripController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('guide/{user}', [GuideController::class, 'show']);
 Route::get('guides', [GuideController::class, 'index']);
+Route::get('explore', [TripController::class, 'index']);
 
 Route::middleware(['auth', 'admin'])->namespace('App\Http\Controllers\Admin')->group(function () {
     Route::get('admin/users/{user}/status', 'UserController@updateStatus');
