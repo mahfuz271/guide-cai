@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import Pagination from '@/components/ui/pagination';
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { confirmDialog } from '@/lib/toast';
-import { BreadcrumbItem, User } from '@/types';
+import { BreadcrumbItem, PaginationLink, User } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { Link, ShieldCheck, ShieldX, Trash } from 'lucide-react';
+import { ShieldCheck, ShieldX, Trash } from 'lucide-react';
 import React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -14,12 +14,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/dashboard',
     },
 ];
-
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
 
 interface PaginatedData<T> {
     data: T[];
@@ -62,18 +56,25 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                 <td className="p-2">{user.email}</td>
                                 <td className="p-2">{user.created_at}</td>
                                 <td className="flex gap-2 text-right">
+                                    {user.role == 'guide' && (
+                                        <a target="_blank" className="flex-1" href={`/guide/${user.id}`}>
+                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
+                                                View
+                                            </Button>
+                                        </a>
+                                    )}
                                     {user.status === 'pending' && (
-                                        <Link className="flex-1" href={`/admin/users/${user.id}/status?status=active`}>
-                                            <Button variant="default" size="sm" className="w-full">
+                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
+                                            <Button variant="default" size="sm" className="w-full cursor-pointer">
                                                 <ShieldCheck size={16} className="mr-1" />
                                                 Approve
                                             </Button>
-                                        </Link>
+                                        </a>
                                     )}
 
                                     {(user.status === 'active' || user.status === 'pending') && (
                                         <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=blocked`)}>
-                                            <Button variant="ghost" size="sm" className="w-full">
+                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
                                                 <ShieldX size={16} className="mr-1" />
                                                 Block
                                             </Button>
@@ -81,16 +82,16 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                     )}
 
                                     {user.status === 'blocked' && (
-                                        <Link className="flex-1" href={`/admin/users/${user.id}/status?status=active`}>
-                                            <Button variant="default" size="sm" className="w-full">
+                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
+                                            <Button variant="default" size="sm" className="w-full cursor-pointer">
                                                 <ShieldCheck size={16} className="mr-1" />
                                                 Activate
                                             </Button>
-                                        </Link>
+                                        </a>
                                     )}
 
                                     <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/delete`)}>
-                                        <Button variant="ghost" size="sm" className="w-full text-red-400">
+                                        <Button variant="ghost" size="sm" className="w-full cursor-pointer text-red-400">
                                             <Trash size={16} className="mr-1" />
                                             Delete
                                         </Button>

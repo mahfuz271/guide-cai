@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Award, Calendar as CalendarIcon, Clock, DollarSign, Languages, MapPin, MessageCircle, Star } from 'lucide-react';
 import { useState } from 'react';
 
@@ -11,13 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useInitials } from '@/hooks/use-initials';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
-import { User } from '@/types';
+import { SharedData, User } from '@/types';
 
 interface GuideProfileProps {
     guide: User;
 }
 
 const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
+    const { auth } = usePage<SharedData>().props;
+    const isAdmin = auth.user.role === 'admin';
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const getInitials = useInitials();
@@ -27,7 +29,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
     }
 
     // Check guide status
-    if (guide.status === 'blocked') {
+    if (!isAdmin && guide.status === 'blocked') {
         return (
             <AppHeaderLayout maxWidth>
                 <Head title="Guide Blocked" />
@@ -39,7 +41,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
         );
     }
 
-    if (guide.status === 'pending') {
+    if (!isAdmin && guide.status === 'pending') {
         return (
             <AppHeaderLayout maxWidth>
                 <Head title="Guide Pending Approval" />
@@ -105,6 +107,16 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
     return (
         <AppHeaderLayout maxWidth>
             <Head title={`Guide - ${guide.name}`} />
+            {isAdmin && guide.status === 'pending' && (
+                <div className="p-8 pb-0 text-center text-yellow-600">
+                    <h1 className="text-2xl font-bold">This guide's profile is pending approval.</h1>
+                </div>
+            )}
+            {isAdmin && guide.status === 'blocked' && (
+                <div className="p-8 pb-0 text-center text-yellow-600">
+                    <h1 className="text-2xl font-bold">This guide is currently blocked.</h1>
+                </div>
+            )}
             <div className="px-4 py-8">
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                     <div className="space-y-6 lg:col-span-2">
@@ -307,10 +319,12 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
 
                                 <Button className="from-primary to-primary/50 text-primary-foreground w-full bg-gradient-to-r">Book Now</Button>
 
-                                <Button variant="outline" className="w-full">
-                                    <MessageCircle className="mr-2 h-4 w-4" />
-                                    Contact Guide
-                                </Button>
+                                <a href={`tel:${guide.phone}`}>
+                                    <Button variant="outline" className="w-full cursor-pointer">
+                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                        Contact Guide
+                                    </Button>
+                                </a>
                             </CardContent>
                         </Card>
 

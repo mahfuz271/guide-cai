@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Enums\UserEnum;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +18,8 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Mahfuz',
             'email' => 'mahafujer@gmail.com',
-            'role' => 'admin',
+            'role' => UserEnum::ADMIN,
+            'status' => UserEnum::STATUS_ACTIVE,
             'phone' => "01762625154",
             'password' => Hash::make("12345678"),
         ]);

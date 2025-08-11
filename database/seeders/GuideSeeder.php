@@ -14,7 +14,7 @@ class GuideSeeder extends Seeder
         Storage::disk('public')->makeDirectory('guide_photos');
 
         User::factory()
-            ->count(100)
+            ->count(15)
             ->create()
             ->each(function ($user) {
                 $guideProfile = $user->guideProfile()->create(

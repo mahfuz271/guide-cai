@@ -100,7 +100,7 @@ export default function Welcome() {
                             Book authentic travel experiences with local tour guides who bring their destination to life.
                         </p>
                         <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
-                            <Link href="/tours">
+                            <Link href="/explore">
                                 <Button
                                     size="lg"
                                     className="from-primary to-primary/60 text-primary-foreground hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
@@ -206,8 +206,8 @@ export default function Welcome() {
                             </h2>
                             <p className="text-muted-foreground max-w-2xl text-lg">Handpicked guided experiences from across the globe.</p>
                         </div>
-                        <Link href="/tours">
-                            <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/50">
+                        <Link href="/explore">
+                            <Button variant="outline" className="cursor-pointer border-primary/30 text-primary hover:bg-primary/50">
                                 View All
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
