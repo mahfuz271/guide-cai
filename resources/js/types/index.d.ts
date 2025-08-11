@@ -75,3 +75,12 @@ interface GuideProfileData {
     verified?: boolean;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+interface GuideAvailability {
+    id: number;
+    guide_id: number;
+    day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    start_time: string;
+    end_time: string;
+    is_active: boolean;
+}

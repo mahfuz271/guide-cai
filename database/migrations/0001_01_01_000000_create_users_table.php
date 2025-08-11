@@ -19,8 +19,8 @@ return new class extends Migration
             $table->enum('status', UserEnum::allStatus())->default(UserEnum::STATUS_ACTIVE)->nullable();
             $table->string('email')->unique();
             $table->string('avatar')->nullable();
-            $table->string('phone', 20)->nullable()->after('email');
-            $table->string('location')->nullable()->after('phone');
+            $table->string('phone', 20)->nullable();
+            $table->string('location')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

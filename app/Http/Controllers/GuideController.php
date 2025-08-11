@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserEnum;
+use App\Models\GuideAvailability;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -40,6 +41,11 @@ class GuideController extends Controller
     public function show(User $user): Response
     {
         $user->load('guideProfile.photos');
-        return Inertia::render('guide/single', ['guide' => $user]);
+        $availabilities = GuideAvailability::where('guide_id', $user->id)->get();
+
+        return Inertia::render('guide/single', [
+            'guide' => $user,
+            'availabilities' => $availabilities,
+        ]);
     }
 }

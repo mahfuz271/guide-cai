@@ -105,7 +105,7 @@ export default function Welcome() {
                                     size="lg"
                                     className="from-primary to-primary/60 text-primary-foreground hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
                                 >
-                                    Browse Tours
+                                    Explore Destinations
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>

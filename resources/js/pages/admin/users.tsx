@@ -65,9 +65,17 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                     )}
                                     {user.status === 'pending' && (
                                         <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
-                                            <Button variant="default" size="sm" className="w-full cursor-pointer">
+                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
                                                 <ShieldCheck size={16} className="mr-1" />
                                                 Approve
+                                            </Button>
+                                        </a>
+                                    )}
+                                    {user.status === 'blocked' && (
+                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
+                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
+                                                <ShieldCheck size={16} className="mr-1" />
+                                                Activate
                                             </Button>
                                         </a>
                                     )}
@@ -81,14 +89,6 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                         </a>
                                     )}
 
-                                    {user.status === 'blocked' && (
-                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
-                                            <Button variant="default" size="sm" className="w-full cursor-pointer">
-                                                <ShieldCheck size={16} className="mr-1" />
-                                                Activate
-                                            </Button>
-                                        </a>
-                                    )}
 
                                     <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/delete`)}>
                                         <Button variant="ghost" size="sm" className="w-full cursor-pointer text-red-400">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuideAvailabilityController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\TripController;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    // Guide availability
+    Route::get('/guide/availability', [GuideAvailabilityController::class, 'index'])
+        ->name('guides.availability');
+    Route::post('/guide/availability', [GuideAvailabilityController::class, 'store'])
+        ->name('guides.availability.store');
+    Route::delete('/guide/availability/{availability}', [GuideAvailabilityController::class, 'destroy'])
+        ->name('guides.availability.destroy');
+
 });
 
 Route::get('guide/{user}', [GuideController::class, 'show']);
