@@ -8,12 +8,7 @@ import { Head, router } from '@inertiajs/react';
 import { ShieldCheck, ShieldX, Trash } from 'lucide-react';
 import React from 'react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
 
 interface PaginatedData<T> {
     data: T[];
@@ -28,83 +23,85 @@ interface UsersProps {
 const Users: React.FC<UsersProps> = ({ users, title }) => {
     const onConfirm = async (url: string) => {
         const confirmed = await confirmDialog();
-        if (confirmed) {
-            router.get(url);
-            return;
-        }
-        return false;
+        if (confirmed) router.get(url);
     };
+
     return (
         <AppSidebarLayout breadcrumbs={breadcrumbs}>
             <Head title={title} />
-            <div className="px-4 py-6">
-                <Heading title={title} description={''} />
+            <div className="space-y-6 px-4 py-6">
+                <Heading title={title} description="" />
 
-                <table className="mt-4 w-full text-sm">
-                    <thead>
-                        <tr className="bg-gray-100 dark:bg-black/90">
-                            <th className="p-2 text-left">Name</th>
-                            <th className="p-2 text-left">Email</th>
-                            <th className="p-2 text-left">Created At</th>
-                            <th className="p-2 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users?.data.map((user) => (
-                            <tr key={user.id} className="border-t">
-                                <td className="p-2">{user.name}</td>
-                                <td className="p-2">{user.email}</td>
-                                <td className="p-2">{user.created_at}</td>
-                                <td className="flex gap-2 text-right">
-                                    {user.role == 'guide' && (
-                                        <a target="_blank" className="flex-1" href={`/guide/${user.id}`}>
-                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
-                                                View
-                                            </Button>
-                                        </a>
-                                    )}
-                                    {user.status === 'pending' && (
-                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
-                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
-                                                <ShieldCheck size={16} className="mr-1" />
-                                                Approve
-                                            </Button>
-                                        </a>
-                                    )}
-                                    {user.status === 'blocked' && (
-                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}>
-                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
-                                                <ShieldCheck size={16} className="mr-1" />
-                                                Activate
-                                            </Button>
-                                        </a>
-                                    )}
-
-                                    {(user.status === 'active' || user.status === 'pending') && (
-                                        <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/status?status=blocked`)}>
-                                            <Button variant="ghost" size="sm" className="w-full cursor-pointer">
-                                                <ShieldX size={16} className="mr-1" />
-                                                Block
-                                            </Button>
-                                        </a>
-                                    )}
-
-
-                                    <a className="flex-1" onClick={() => onConfirm(`/admin/users/${user.id}/delete`)}>
-                                        <Button variant="ghost" size="sm" className="w-full cursor-pointer text-red-400">
-                                            <Trash size={16} className="mr-1" />
-                                            Delete
-                                        </Button>
-                                    </a>
-                                </td>
+                <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm dark:divide-gray-700">
+                        <thead className="bg-gray-100 dark:bg-black/90">
+                            <tr>
+                                <th className="p-2 text-left font-medium">Name</th>
+                                <th className="p-2 text-left font-medium">Email</th>
+                                <th className="p-2 text-left font-medium">Created At</th>
+                                <th className="p-2 text-right font-medium">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-
-                <div className="my-4">
-                    <Pagination links={users?.links} />
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {users?.data.map((user) => (
+                                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                    <td className="p-2">{user.name}</td>
+                                    <td className="p-2">{user.email}</td>
+                                    <td className="p-2">{user.created_at}</td>
+                                    <td className="flex flex-col justify-end gap-2 p-2 sm:flex-row">
+                                        {user.role === 'guide' && (
+                                            <a target="_blank" href={`/guide/${user.id}`}>
+                                                <Button variant="ghost" size="sm" className="w-full sm:w-auto">
+                                                    View
+                                                </Button>
+                                            </a>
+                                        )}
+                                        {user.status === 'pending' && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}
+                                                className="flex w-full items-center gap-1 sm:w-auto"
+                                            >
+                                                <ShieldCheck size={16} /> Approve
+                                            </Button>
+                                        )}
+                                        {user.status === 'blocked' && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}
+                                                className="flex w-full items-center gap-1 sm:w-auto"
+                                            >
+                                                <ShieldCheck size={16} /> Activate
+                                            </Button>
+                                        )}
+                                        {(user.status === 'active' || user.status === 'pending') && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => onConfirm(`/admin/users/${user.id}/status?status=blocked`)}
+                                                className="flex w-full items-center gap-1 sm:w-auto"
+                                            >
+                                                <ShieldX size={16} /> Block
+                                            </Button>
+                                        )}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => onConfirm(`/admin/users/${user.id}/delete`)}
+                                            className="flex w-full items-center gap-1 text-red-400 sm:w-auto"
+                                        >
+                                            <Trash size={16} /> Delete
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
+
+                <Pagination links={users?.links} />
             </div>
         </AppSidebarLayout>
     );

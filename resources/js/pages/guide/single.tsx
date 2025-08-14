@@ -1,34 +1,103 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import dayjs from 'dayjs';
 import { Award, Calendar as CalendarIcon, Clock, DollarSign, Languages, MapPin, MessageCircle, Star } from 'lucide-react';
-import { useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useInitials } from '@/hooks/use-initials';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
-import { SharedData, User } from '@/types';
+import { GuideAvailability, SharedData, User } from '@/types';
 
 interface GuideProfileProps {
     guide: User;
+    availabilities: GuideAvailability[];
 }
 
-const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
+interface Review {
+    name: string;
+    rating: number;
+    date: string;
+    comment: string;
+}
+
+interface Trip {
+    title: string;
+    duration: string;
+    price: string;
+    description: string;
+    popular?: boolean;
+}
+
+const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) => {
     const { auth } = usePage<SharedData>().props;
-    const isAdmin = auth.user.role === 'admin';
-    const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-    const [selectedTime, setSelectedTime] = useState('');
+    const isAdmin = auth.user && auth.user.role === 'admin';
     const getInitials = useInitials();
 
-    if (!guide) {
-        return <div>Guide not found.</div>;
-    }
+    const [localDate, setLocalDate] = useState<Date>(new Date());
+
+    const { data, setData, post, processing, errors } = useForm({
+        guide_id: guide.id,
+        date: dayjs().format('YYYY-MM-DD'),
+        start_time: '',
+        hours: 2,
+        special_requests: '',
+    });
+
+    const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+
+    const handleDateChange = (date: Date | undefined) => {
+        if (!date) return;
+        setLocalDate(date);
+        setData('date', dayjs(date).format('YYYY-MM-DD'));
+        setData('start_time', '');
+
+        const dayOfWeek = dayjs(date).format('dddd').toLowerCase();
+
+        const availability = availabilities.find((a) => a.day_of_week === dayOfWeek);
+
+        if (availability) {
+            const start = new Date(`1970-01-01T${availability.start_time}`);
+            const end = new Date(`1970-01-01T${availability.end_time}`);
+
+            const times: string[] = [];
+            let current = new Date(start);
+
+            while (current < end) {
+                times.push(current.toTimeString().substring(0, 5));
+                current.setHours(current.getHours() + 1);
+            }
+
+            setAvailableTimes(times);
+        } else {
+            setAvailableTimes([]);
+        }
+    };
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('bookings.store'));
+    };
 
     // Check guide status
+    if (!guide) {
+        return (
+            <AppHeaderLayout maxWidth>
+                <Head title="Guide Blocked" />
+                <div className="p-8 text-center text-red-600">
+                    <h1 className="text-2xl font-bold">Guide not found.</h1>
+                </div>
+            </AppHeaderLayout>
+        );
+    }
+
     if (!isAdmin && guide.status === 'blocked') {
         return (
             <AppHeaderLayout maxWidth>
@@ -53,10 +122,9 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
         );
     }
 
-    // Extract guide_profile for easier access
     const profile = guide.guide_profile || {};
 
-    const reviews = [
+    const reviews: Review[] = [
         {
             name: 'Sarah Johnson',
             rating: 5,
@@ -80,7 +148,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
         },
     ];
 
-    const trips = [
+    const trips: Trip[] = [
         {
             title: 'Traditional Tokyo Cultural Experience',
             duration: '4 hours',
@@ -101,8 +169,6 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
             description: 'Learn calligraphy, origami, or traditional painting with local artisans',
         },
     ];
-
-    const timeSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM'];
 
     return (
         <AppHeaderLayout maxWidth>
@@ -173,7 +239,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
                                         </div>
 
                                         <div className="mb-4 flex flex-wrap gap-2">
-                                            {(profile.languages ?? []).map((language) => (
+                                            {(profile.languages ?? []).map((language: string) => (
                                                 <Badge key={language} variant="outline" className="border-primary/20 text-primary/80">
                                                     <Languages className="mr-1 h-3 w-3" />
                                                     {language}
@@ -182,7 +248,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
                                         </div>
 
                                         <div className="flex flex-wrap gap-2">
-                                            {(profile.specialties ?? []).map((specialty) => (
+                                            {(profile.specialties ?? []).map((specialty: string) => (
                                                 <Badge key={specialty} variant="outline" className="border-primary/20 text-primary/80">
                                                     {specialty}
                                                 </Badge>
@@ -270,7 +336,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
 
                             <TabsContent value="photos">
                                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                                    {guide?.guide_profile?.photos?.map((photo, index) => (
+                                    {guide?.guide_profile?.photos?.map((photo: { full_path: string }, index: number) => (
                                         <div key={index} className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
                                             <img src={photo.full_path} alt={`Guide photo ${index + 1}`} className="h-full w-full object-cover" />
                                         </div>
@@ -282,49 +348,108 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide }) => {
 
                     {/* Booking Sidebar */}
                     <div className="space-y-6">
-                        <Card className="border-primary/20 from-primary/5 sticky top-24 bg-gradient-to-br to-transparent">
+                        <Card className="border-primary/20 from-primary/5 bg-gradient-to-br to-transparent">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <CalendarIcon className="text-primary h-5 w-5" /> Book {guide.name}
                                 </CardTitle>
                                 <div className="text-primary text-2xl font-bold">${profile.hourly_rate ?? 0}/hour</div>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium">Select Date</label>
-                                    <Calendar
-                                        mode="single"
-                                        selected={selectedDate}
-                                        onSelect={setSelectedDate}
-                                        className="border-primary/20 rounded-md border"
-                                        disabled={(date) => date < new Date()}
-                                    />
-                                </div>
+                            <CardContent>
+                                <form onSubmit={submit} className="space-y-4">
+                                    <div>
+                                        <label className="mb-2 block text-sm font-medium">Select Date</label>
+                                        <Calendar
+                                            mode="single"
+                                            selected={localDate}
+                                            onSelect={handleDateChange}
+                                            className="border-primary/20 rounded-md border"
+                                            disabled={(date) => date < new Date()}
+                                        />
+                                        {errors.date && <p className="mt-1 text-sm text-red-500">{errors.date}</p>}
+                                    </div>
 
-                                <div>
-                                    <label className="mb-2 block text-sm font-medium">Select Time</label>
-                                    <Select value={selectedTime} onValueChange={setSelectedTime}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Choose time slot" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {timeSlots.map((time) => (
-                                                <SelectItem key={time} value={time}>
-                                                    {time}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                    <div>
+                                        <Label htmlFor="start_time">Start Time</Label>
+                                        <Select
+                                            value={data.start_time}
+                                            disabled={availableTimes.length == 0}
+                                            onValueChange={(value) => setData('start_time', value)}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={availableTimes.length > 0 ? 'Select start time' : 'No Slot Available'} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {availableTimes.length > 0 &&
+                                                    availableTimes.map((time) => (
+                                                        <SelectItem key={time} value={time}>
+                                                            {time}
+                                                        </SelectItem>
+                                                    ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.start_time && <p className="mt-1 text-sm text-red-500">{errors.start_time}</p>}
+                                    </div>
 
-                                <Button className="from-primary to-primary/50 text-primary-foreground w-full bg-gradient-to-r">Book Now</Button>
+                                    <div>
+                                        <Label htmlFor="hours">Duration (hours)</Label>
+                                        <Input
+                                            id="hours"
+                                            type="number"
+                                            min="1"
+                                            max="8"
+                                            disabled={availableTimes.length == 0}
+                                            value={data.hours}
+                                            onChange={(e) => setData('hours', parseInt(e.target.value))}
+                                        />
+                                        {errors.hours && <p className="mt-1 text-sm text-red-500">{errors.hours}</p>}
+                                    </div>
 
-                                <a href={`tel:${guide.phone}`}>
-                                    <Button variant="outline" className="w-full cursor-pointer">
-                                        <MessageCircle className="mr-2 h-4 w-4" />
-                                        Contact Guide
+                                    <div>
+                                        <Label htmlFor="special_requests">Special Requests</Label>
+                                        <textarea
+                                            disabled={availableTimes.length == 0}
+                                            id="special_requests"
+                                            className="border-primary/20 flex h-20 w-full rounded-md border px-3 py-2 text-sm"
+                                            value={data.special_requests}
+                                            onChange={(e) => setData('special_requests', e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="border-primary/20 mt-6 rounded-lg border p-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <DollarSign className="h-5 w-5" />
+                                                <span className="font-medium">Hourly Rate:</span>
+                                            </div>
+                                            <span>${guide.guide_profile?.hourly_rate}/hour</span>
+                                        </div>
+                                        <div className="mt-2 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="h-5 w-5" />
+                                                <span className="font-medium">Total:</span>
+                                            </div>
+                                            <span className="text-lg font-bold">
+                                                ${((guide.guide_profile?.hourly_rate ?? 0) * data.hours).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        disabled={processing || availableTimes.length == 0}
+                                        className="from-primary to-primary/50 text-primary-foreground w-full bg-gradient-to-r"
+                                    >
+                                        Book Now
                                     </Button>
-                                </a>
+
+                                    {isAdmin && (
+                                        <a href={`tel:${guide.phone}`}>
+                                            <Button variant="outline" className="w-full cursor-pointer">
+                                                <MessageCircle className="mr-2 h-4 w-4" />
+                                                Contact Guide
+                                            </Button>
+                                        </a>
+                                    )}
+                                </form>
                             </CardContent>
                         </Card>
 

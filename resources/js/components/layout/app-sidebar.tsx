@@ -23,6 +23,11 @@ export function AppSidebar() {
     if (user?.role === 'admin') {
         mainNavItems.push(
             {
+                title: 'Bookings',
+                href: '/bookings',
+                icon: CalendarCheck,
+            },
+            {
                 title: 'User Approvals',
                 href: '/admin/approvals',
                 icon: UserCheck,
@@ -59,7 +64,7 @@ export function AppSidebar() {
             },
             {
                 title: 'My Bookings',
-                href: '/guide/bookings',
+                href: '/bookings',
                 icon: CalendarCheck,
             },
             {

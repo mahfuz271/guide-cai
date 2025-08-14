@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GuideAvailabilityController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\TripController;
@@ -23,10 +24,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/guide/availability/{availability}', [GuideAvailabilityController::class, 'destroy'])
         ->name('guides.availability.destroy');
 
+    // Bookings
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::post('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])
+        ->name('bookings.update-status');
 });
 
 Route::get('guide/{user}', [GuideController::class, 'show']);
-Route::get('guides', [GuideController::class, 'index']);
+Route::get('guides', [GuideController::class, 'index'])->name('guides.index');
 Route::get('explore', [TripController::class, 'index']);
 
 Route::middleware(['auth', 'admin'])->namespace('App\Http\Controllers\Admin')->group(function () {
