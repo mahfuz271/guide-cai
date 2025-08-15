@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingEnum;
 use App\Enums\UserEnum;
 use App\Models\Booking;
 use App\Models\GuideAvailability;
@@ -9,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class BookingController extends Controller
 {
@@ -48,7 +50,7 @@ class BookingController extends Controller
             ->where('day_of_week', $dayOfWeek)
             ->first();
 
-        if (!$availability) {
+        if (! $availability) {
             return back()->withErrors(['date' => 'Guide is not available on this day']);
         }
 
@@ -87,7 +89,7 @@ class BookingController extends Controller
             'end_time' => $endTime->format('H:i'),
             'hours' => $request->hours,
             'total_amount' => $hourlyRate * $request->hours,
-            'status' => 'pending',
+            'status' => BookingEnum::PENDING,
             'special_requests' => $request->special_requests,
         ]);
 
@@ -97,19 +99,23 @@ class BookingController extends Controller
     public function updateStatus(Request $request, Booking $booking)
     {
         $request->validate([
-            'status' => 'required|in:confirmed,completed,cancelled',
+            'status' => [
+                'required',
+                'string',
+                Rule::in(BookingEnum::all()),
+            ],
             'is_paid' => 'sometimes|boolean',
         ]);
 
         $user = Auth::user();
 
         // Only guide or admin can update status
-        if (!in_array($user->role, ['admin', 'guide'])) {
+        if (! in_array($user->role, [UserEnum::ADMIN, UserEnum::GUIDE])) {
             abort(403);
         }
 
         // Only guide can mark as completed
-        if ($request->status === 'completed' && $user->role !== 'guide') {
+        if ($request->status === BookingEnum::COMPLETED && $user->role !== UserEnum::GUIDE) {
             abort(403);
         }
 

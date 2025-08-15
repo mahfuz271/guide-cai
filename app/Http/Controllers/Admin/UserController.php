@@ -11,15 +11,14 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct(protected UserRepository $userRepository)
-    {}
+    public function __construct(protected UserRepository $userRepository) {}
 
     public function showAdminUser()
     {
         return inertia(
             'admin/users',
             [
-                "title" => "Manage Admin Users",
+                'title' => 'Manage Admin Users',
                 'users' => User::where('role', UserEnum::ADMIN)->latest()->paginate(12),
             ]
         );
@@ -30,7 +29,7 @@ class UserController extends Controller
         return inertia(
             'admin/users',
             [
-                "title" => "Manage Guides",
+                'title' => 'Manage Guides',
                 'users' => User::where('role', UserEnum::GUIDE)->latest()->paginate(12),
             ]
         );
@@ -41,7 +40,7 @@ class UserController extends Controller
         return inertia(
             'admin/users',
             [
-                "title" => "Manage Guides",
+                'title' => 'Manage Guides',
                 'users' => User::where('role', UserEnum::GUIDE)->where('status', UserEnum::STATUS_PENDING)->latest()->paginate(12),
             ]
         );
@@ -52,7 +51,7 @@ class UserController extends Controller
         return inertia(
             'admin/users',
             [
-                "title" => "Manage Visitor User",
+                'title' => 'Manage Visitor User',
                 'users' => User::where('role', UserEnum::USER)->latest()->paginate(12),
             ]
         );

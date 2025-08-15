@@ -1,10 +1,15 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { LANGUAGE_OPTIONS, SPECIALTY_OPTIONS } from '@/constants/guide-options';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Clock, Compass, Globe, Heart, MapPin, Star, Users } from 'lucide-react';
+import { ArrowRight, Clock, Compass, Globe, Heart, MapPin, Search, Star, Users } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,7 +18,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Welcome() {
+interface WelcomeProps {
+    locations: string[];
+}
+
+export default function Welcome({ locations }: WelcomeProps) {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [priceRange, setPriceRange] = useState([0]);
+    const [location, setLocation] = useState('');
+    const [language, setLanguage] = useState('');
+    const [specialty, setSpecialty] = useState('');
+
     const featuredTrips = [
         {
             title: 'Tokyo Cultural Experience',
@@ -85,48 +100,128 @@ export default function Welcome() {
             <Head title="Explore Guided Tours with Experts" />
 
             {/* Hero Section */}
-            <section className="from-background via-primary/5 to-primary/10 relative overflow-hidden bg-gradient-to-br py-20 lg:py-32">
+            <section className="from-background via-primary/5 to-primary/10 relative overflow-hidden bg-gradient-to-br py-16 lg:py-24">
                 <div className="absolute inset-0 bg-[url('/placeholder.svg')] opacity-5"></div>
-                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-4xl text-center">
                         <div className="bg-primary/10 border-primary/20 text-primary mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm backdrop-blur-sm">
                             <span className="bg-primary h-2 w-2 animate-pulse rounded-full"></span>
                             Real Experiences by Real People
                         </div>
-                        <h1 className="from-foreground via-primary to-foreground mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold leading-tight text-transparent md:text-6xl lg:text-7xl">
-                            Your Marketplace for Guided Tours
+                        <h1 className="from-foreground via-primary to-foreground mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold leading-tight text-transparent md:text-5xl lg:text-6xl">
+                            Connect with Expert Local Guides
                         </h1>
-                        <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg leading-relaxed md:text-xl">
-                            Book authentic travel experiences with local tour guides who bring their destination to life.
+                        <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg leading-relaxed md:text-xl">
+                            Discover authentic experiences with verified local guides who know the hidden gems, cultural insights, and best spots in
+                            their cities.
                         </p>
-                        <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
-                            <Link href="/explore">
-                                <Button
-                                    size="lg"
-                                    className="from-primary to-primary/60 text-primary-foreground hover:shadow-glow transform bg-gradient-to-r transition-all duration-300 hover:-translate-y-1"
-                                >
-                                    Explore Destinations
-                                    <ArrowRight className="ml-2 h-5 w-5" />
-                                </Button>
-                            </Link>
-                            <Link href="/guides">
-                                <Button size="lg" variant="outline" className="border-primary/30 text-primary hover:bg-primary/50">
-                                    Meet the Guides
-                                </Button>
-                            </Link>
+
+                        {/* Guide Search Section */}
+                        <div className="mx-auto mb-8 max-w-4xl">
+                            <Card className="bg-card/90 border-primary/20 shadow-2xl backdrop-blur-lg">
+                                <CardContent className="p-6">
+                                    <div className="space-y-5">
+                                        {/* Main Search Bar */}
+                                        <div className="relative">
+                                            <Search className="text-muted-foreground absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform" />
+                                            <Input
+                                                placeholder="Search guides by name, location, or specialty..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="bg-background/80 border-primary/30 focus:border-primary rounded-xl py-4 pl-12 pr-4 text-lg"
+                                            />
+                                        </div>
+
+                                        {/* Quick Filters Row */}
+                                        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                                            <Select value={location} onValueChange={setLocation}>
+                                                <SelectTrigger className="bg-background/80 border-primary/30 rounded-lg">
+                                                    <SelectValue placeholder="Location" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="any">Any location</SelectItem>
+                                                    {locations.map((loc) => (
+                                                        <SelectItem key={loc} value={loc}>
+                                                            {loc}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                            <Select value={specialty} onValueChange={setSpecialty}>
+                                                <SelectTrigger className="bg-background/80 border-primary/30 rounded-lg">
+                                                    <SelectValue placeholder="Specialty" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="any">Any specialty</SelectItem>
+                                                    {SPECIALTY_OPTIONS.map((spec) => (
+                                                        <SelectItem key={spec} value={spec}>
+                                                            {spec}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                            <Select value={language} onValueChange={setLanguage}>
+                                                <SelectTrigger className="bg-background/80 border-primary/30 rounded-lg">
+                                                    <SelectValue placeholder="Language" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="any">Any language</SelectItem>
+                                                    {LANGUAGE_OPTIONS.map((lang) => (
+                                                        <SelectItem key={lang} value={lang}>
+                                                            {lang}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                            <div className="space-y-2">
+                                                <div className="text-muted-foreground text-center text-xs">Max Rate: ${priceRange[0]}/hr</div>
+                                                <Slider value={priceRange} onValueChange={setPriceRange} max={200} step={10} className="w-full" />
+                                            </div>
+                                        </div>
+
+                                        {/* Search Action */}
+                                        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+                                            <Link
+                                                href="/guides"
+                                                data={{
+                                                    location: location !== 'any' ? location || undefined : undefined,
+                                                    search: searchTerm || undefined,
+                                                    specialty: specialty !== 'any' ? specialty || undefined : undefined,
+                                                    language: language !== 'any' ? language || undefined : undefined,
+                                                    max_rate: priceRange[0] != 0 ? priceRange[0] : undefined,
+                                                }}
+                                                className="flex-1 sm:flex-initial"
+                                            >
+                                                <Button
+                                                    size="lg"
+                                                    className="from-primary to-primary/60 text-primary-foreground w-full rounded-lg bg-gradient-to-r shadow-lg transition-all duration-200 hover:shadow-xl"
+                                                >
+                                                    Search Guides
+                                                    <Search className="ml-2 h-4 w-4" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
-                        <div className="mx-auto grid max-w-md grid-cols-3 gap-8 text-center">
+
+                        {/* Guide Stats */}
+                        <div className="mx-auto grid max-w-lg grid-cols-3 gap-6 text-center">
                             <div>
-                                <div className="text-primary text-2xl font-bold">1000+</div>
+                                <div className="text-primary text-2xl font-bold">2,500+</div>
                                 <div className="text-muted-foreground text-sm">Verified Guides</div>
                             </div>
                             <div>
-                                <div className="text-primary text-2xl font-bold">10K+</div>
-                                <div className="text-muted-foreground text-sm">Unique Tours</div>
+                                <div className="text-primary text-2xl font-bold">150+</div>
+                                <div className="text-muted-foreground text-sm">Cities</div>
                             </div>
                             <div>
-                                <div className="text-primary text-2xl font-bold">95%</div>
-                                <div className="text-muted-foreground text-sm">5-Star Reviews</div>
+                                <div className="text-primary text-2xl font-bold">4.9 ★</div>
+                                <div className="text-muted-foreground text-sm">Avg Rating</div>
                             </div>
                         </div>
                     </div>
@@ -207,7 +302,7 @@ export default function Welcome() {
                             <p className="text-muted-foreground max-w-2xl text-lg">Handpicked guided experiences from across the globe.</p>
                         </div>
                         <Link href="/explore">
-                            <Button variant="outline" className="cursor-pointer border-primary/30 text-primary hover:bg-primary/50">
+                            <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/50 cursor-pointer">
                                 View All
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
@@ -222,7 +317,7 @@ export default function Welcome() {
                             >
                                 <div className="from-primary/20 to-primary/5 relative aspect-video overflow-hidden bg-gradient-to-br">
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                    <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 dark:bg-black/90 px-2 py-1 backdrop-blur-sm">
+                                    <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm dark:bg-black/90">
                                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                                         <span className="text-xs font-medium">{trip.rating}</span>
                                     </div>

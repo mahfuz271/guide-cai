@@ -43,16 +43,14 @@ class UserRepository
         // 🌐 Language filter (JSON)
         if ($request->filled('language')) {
             $language = $request->language;
-            $query->whereHas('guideProfile', fn($q) =>
-                $q->whereJsonContains('languages', $language)
+            $query->whereHas('guideProfile', fn ($q) => $q->whereJsonContains('languages', $language)
             );
         }
 
         // 🎯 Specialty filter (JSON)
         if ($request->filled('specialty')) {
             $specialty = $request->specialty;
-            $query->whereHas('guideProfile', fn($q) =>
-                $q->whereJsonContains('specialties', $specialty)
+            $query->whereHas('guideProfile', fn ($q) => $q->whereJsonContains('specialties', $specialty)
             );
         }
 
@@ -71,8 +69,7 @@ class UserRepository
         // 🏆 Experience filter
         if ($request->filled('experience')) {
             $experience = $request->experience;
-            $query->whereHas('guideProfile', fn($q) =>
-                $q->where('experience', $experience)
+            $query->whereHas('guideProfile', fn ($q) => $q->where('experience', $experience)
             );
         }
 
@@ -109,7 +106,7 @@ class UserRepository
             'specialties' => $data['specialties'],
         ]);
 
-        if (!empty($data['photos'])) {
+        if (! empty($data['photos'])) {
             foreach ($data['photos'] as $photo) {
                 $path = $photo->store('guide_photos', 'public');
                 $guideProfile->photos()->create(['path' => $path]);
@@ -132,10 +129,10 @@ class UserRepository
 
         if ($avatar) {
             if ($user->avatar) {
-                Storage::disk('public')->delete('avatars/' . $user->avatar);
+                Storage::disk('public')->delete('avatars/'.$user->avatar);
             }
 
-            $filename = uniqid() . '.' . $avatar->getClientOriginalExtension();
+            $filename = uniqid().'.'.$avatar->getClientOriginalExtension();
             $avatar->storeAs('avatars', $filename, 'public');
             $user->avatar = $filename;
         }
@@ -149,7 +146,7 @@ class UserRepository
     public function deleteUser(User $user): void
     {
         if ($user->avatar) {
-            Storage::disk('public')->delete('avatars/' . $user->avatar);
+            Storage::disk('public')->delete('avatars/'.$user->avatar);
         }
 
         $user->delete();

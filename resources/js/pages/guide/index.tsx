@@ -34,10 +34,10 @@ export default function Guides({ guides, locations, filters }: GuideProps) {
     const [initiated, setInitiated] = useState(false);
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [priceRange, setPriceRange] = useState([filters.min_rate || 0, filters.max_rate || 500]);
-    const [selectedLocation, setSelectedLocation] = useState(filters.location || 'all');
+    const [selectedLocation, setSelectedLocation] = useState(filters.location || 'any');
     const [selectedLanguage, setSelectedLanguage] = useState(filters.language || 'any');
     const [selectedSpecialty, setSelectedSpecialty] = useState(filters.specialty || 'any');
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(!Array.isArray(filters));
 
     const applyFilters = () => {
         if (initiated) {
@@ -45,7 +45,7 @@ export default function Guides({ guides, locations, filters }: GuideProps) {
                 '/guides',
                 {
                     search: searchTerm || undefined,
-                    location: selectedLocation !== 'all' ? selectedLocation : undefined,
+                    location: selectedLocation !== 'any' ? selectedLocation : undefined,
                     language: selectedLanguage !== 'any' ? selectedLanguage : undefined,
                     specialty: selectedSpecialty !== 'any' ? selectedSpecialty : undefined,
                     min_rate: priceRange[0] !== 0 ? priceRange[0] : undefined,
@@ -79,7 +79,7 @@ export default function Guides({ guides, locations, filters }: GuideProps) {
     }, [selectedLocation, selectedLanguage, selectedSpecialty, priceRange]);
 
     const clearFilters = () => {
-        setSelectedLocation('all');
+        setSelectedLocation('any');
         setSelectedLanguage('any');
         setSelectedSpecialty('any');
         setPriceRange([0, 500]);
@@ -152,10 +152,10 @@ export default function Guides({ guides, locations, filters }: GuideProps) {
                                     </label>
                                     <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="All locations" />
+                                            <SelectValue placeholder="Any locations" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="all">All locations</SelectItem>
+                                            <SelectItem value="any">Any locations</SelectItem>
                                             {locations.map((loc) => (
                                                 <SelectItem key={loc} value={loc}>
                                                     {loc}

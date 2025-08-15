@@ -15,6 +15,17 @@ class GuideController extends Controller
     public function __construct(protected UserRepository $userRepository)
     {}
 
+    public function welcome(Request $request): Response
+    {
+        return Inertia::render('welcome', [
+            'locations' => User::whereNotNull('location')
+                ->where('status', UserEnum::STATUS_ACTIVE)
+                ->orderBy('location')
+                ->distinct()
+                ->pluck('location'),
+        ]);
+    }
+
     public function index(Request $request): Response
     {
         $guides = $this->userRepository->searchGuides($request);

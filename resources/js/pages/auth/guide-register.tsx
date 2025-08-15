@@ -31,7 +31,7 @@ type RegisterForm = {
 export default function GuideRegister() {
     const [photoPreviews, setPhotoPreviews] = useState<string[]>(['', '', '', '']);
 
-    const { data, setData, post, processing, errors, reset, transform } = useForm<Required<RegisterForm>>({
+    const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
         password: '',

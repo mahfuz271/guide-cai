@@ -42,22 +42,22 @@ class HandleInertiaRequests extends Middleware
         $shared = parent::share($request);
 
         $shared['flash'] = [
-            'success' => fn() => $request->session()->get('success'),
-            'error' => fn() => $request->session()->get('error'),
+            'success' => fn () => $request->session()->get('success'),
+            'error' => fn () => $request->session()->get('error'),
         ];
 
         return [
-             ...$shared,
+            ...$shared,
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
             ],
-            'ziggy' => fn(): array=> [
-                 ...(new Ziggy)->toArray(),
+            'ziggy' => fn (): array => [
+                ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
 }

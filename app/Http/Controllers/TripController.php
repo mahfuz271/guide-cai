@@ -8,10 +8,8 @@ use Inertia\Response;
 
 class TripController extends Controller
 {
-
     public function index(Request $request): Response
     {
         return Inertia::render('trip/index');
     }
-
 }

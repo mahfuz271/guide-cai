@@ -13,7 +13,7 @@ class GuideProfileFactory extends Factory
     {
         return [
             'hourly_rate' => $this->faker->randomFloat(2, 10, 200),
-            'experience' => $this->faker->numberBetween(1, 30) . ' years',
+            'experience' => $this->faker->numberBetween(1, 30).' years',
             'bio' => $this->faker->paragraphs(3, true),
             'languages' => $this->faker->randomElements(
                 [

@@ -68,7 +68,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) =>
             const end = new Date(`1970-01-01T${availability.end_time}`);
 
             const times: string[] = [];
-            let current = new Date(start);
+            const current = new Date(start);
 
             while (current < end) {
                 times.push(current.toTimeString().substring(0, 5));

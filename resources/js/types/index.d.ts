@@ -58,7 +58,7 @@ export interface User {
     guide_profile?: GuideProfileData;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }
 
 interface GuideProfileData {
@@ -73,8 +73,7 @@ interface GuideProfileData {
     bio?: string;
     photos?: { full_path: string; path: string }[];
     hourly_rate?: number;
-    verified?: boolean;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }
 
 interface GuideAvailability {
@@ -84,4 +83,5 @@ interface GuideAvailability {
     start_time: string;
     end_time: string;
     is_active: boolean;
+    [key: string]: unknown;
 }
