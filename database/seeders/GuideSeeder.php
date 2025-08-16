@@ -53,10 +53,9 @@ class GuideSeeder extends Seeder
         };
 
         // Create fixed guide
-        $fixedUser = User::factory()->create([
+        $fixedUser = User::factory()->guide()->create([
             'name' => 'Guide A',
             'email' => 'guide@gmail.com',
-            'role' => UserEnum::GUIDE,
             'status' => UserEnum::STATUS_ACTIVE,
             'phone' => '01762625154',
             'password' => Hash::make('12345678'),
@@ -70,7 +69,7 @@ class GuideSeeder extends Seeder
         $assignAvailability($fixedUser->id);
 
         User::factory()
-            ->count(100)
+            ->count(100)->guide()
             ->create()
             ->each(function ($user) use ($assignPhotos, $assignAvailability) {
                 $profile = $user->guideProfile()->create(

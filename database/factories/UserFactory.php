@@ -28,7 +28,6 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'role' => UserEnum::GUIDE,
             'status' => $this->faker->randomElement(UserEnum::allStatus()),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('password'),
@@ -38,12 +37,26 @@ class UserFactory extends Factory
         ];
     }
 
+    public function guide(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => UserEnum::GUIDE,
+        ]);
+    }
+
+    public function user(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => UserEnum::USER,
+        ]);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

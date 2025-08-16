@@ -2,25 +2,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Pagination from '@/components/ui/pagination';
+import ReviewModal from '@/components/user/ReviewModal';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
-import { PaginationLink, SharedData, User } from '@/types';
+import { Booking, PaginationLink, SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import dayjs from 'dayjs';
 import { Calendar as CalendarIcon, Check, X } from 'lucide-react';
-
-type Booking = {
-    id: number;
-    user: User;
-    guide: User;
-    date: string;
-    start_time: string;
-    end_time: string;
-    hours: number;
-    total_amount: number;
-    status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-    is_paid: boolean;
-    special_requests?: string;
-};
+import { useState } from 'react';
 
 interface PaginatedData<T> {
     data: T[];
@@ -35,6 +24,14 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
     const { auth } = usePage<SharedData>().props;
     const userRole = auth.user.role;
     const isUser = userRole === 'user';
+
+    const [reviewOpen, setReviewOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
+
+    const openReviewModal = (bookingId: number) => {
+        setSelectedBooking(bookingId);
+        setReviewOpen(true);
+    };
 
     const LayoutWrapper = ({ children }: { children: React.ReactNode }) => {
         return isUser ? <AppHeaderLayout maxWidth>{children}</AppHeaderLayout> : <AppSidebarLayout>{children}</AppSidebarLayout>;
@@ -96,7 +93,7 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
                                                     )}
                                                 </div>
                                                 <div className="text-muted-foreground mt-1 text-sm">
-                                                    {new Date(booking.date).toLocaleDateString()} • {booking.start_time} - {booking.end_time}
+                                                    {dayjs(booking.date).format('DD/MM/YYYY')} • {booking.start_time} - {booking.end_time}
                                                 </div>
                                                 {booking.special_requests && (
                                                     <p className="mt-2 text-sm">
@@ -111,6 +108,23 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {userRole === 'user' && booking.status === 'completed' && !booking.review && (
+                                            <div className="mt-3">
+                                                <Button variant="outline" size="sm" onClick={() => openReviewModal(booking.id)}>
+                                                    Leave Review
+                                                </Button>
+                                            </div>
+                                        )}
+
+                                        {booking.review && (
+                                            <div className="text-muted-foreground mt-2 flex gap-1 border-t pt-2 text-sm">
+                                                <p>
+                                                    <span className="text-yellow-400">★</span> {booking.review.rating}/5
+                                                </p>
+                                                {booking.review.comment && <p>{booking.review.comment}</p>}
+                                            </div>
+                                        )}
 
                                         {userRole !== 'user' && booking.status !== 'cancelled' && (
                                             <div className="mt-4 flex gap-2">
@@ -140,7 +154,7 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
                                                         </Link>
                                                     </Button>
                                                 )}
-                                                {(booking.status as Booking['status']) !== 'cancelled' && (
+                                                {!['completed', 'cancelled'].includes(booking.status as Booking['status']) && (
                                                     <Button variant="outline" size="sm" asChild>
                                                         <Link
                                                             method="post"
@@ -165,6 +179,8 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
                     </CardContent>
                 </Card>
             </div>
+            {/* Review Popup */}
+            <ReviewModal open={reviewOpen} onClose={() => setReviewOpen(false)} bookingId={selectedBooking} />
         </LayoutWrapper>
     );
 };

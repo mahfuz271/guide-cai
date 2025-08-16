@@ -18,7 +18,7 @@ class BookingController extends Controller
     {
         $user = Auth::user();
 
-        $query = Booking::with(['guide', 'user']);
+        $query = Booking::with(['guide', 'user', 'review']);
 
         if ($user->role === UserEnum::GUIDE) {
             $query->where('guide_id', $user->id);
@@ -50,7 +50,7 @@ class BookingController extends Controller
             ->where('day_of_week', $dayOfWeek)
             ->first();
 
-        if (! $availability) {
+        if (!$availability) {
             return back()->withErrors(['date' => 'Guide is not available on this day']);
         }
 
@@ -110,7 +110,7 @@ class BookingController extends Controller
         $user = Auth::user();
 
         // Only guide or admin can update status
-        if (! in_array($user->role, [UserEnum::ADMIN, UserEnum::GUIDE])) {
+        if (!in_array($user->role, [UserEnum::ADMIN, UserEnum::GUIDE])) {
             abort(403);
         }
 

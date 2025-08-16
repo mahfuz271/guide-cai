@@ -56,16 +56,16 @@ export interface User {
     status: 'active' | 'blocked' | 'pending';
     verified?: boolean;
     guide_profile?: GuideProfileData;
+    avg_rating?: number;
+    total_reviews?: number;
+    reviews?: Review[];
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
 }
 
-interface GuideProfileData {
+export interface GuideProfileData {
     title?: string;
-    rating?: number;
-    reviews_count?: number;
-    total_guides?: number;
     response_time?: string;
     booking_rate?: number;
     languages?: string[];
@@ -76,7 +76,7 @@ interface GuideProfileData {
     [key: string]: unknown;
 }
 
-interface GuideAvailability {
+export interface GuideAvailability {
     id: number;
     guide_id: number;
     day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -85,3 +85,29 @@ interface GuideAvailability {
     is_active: boolean;
     [key: string]: unknown;
 }
+
+export type Booking = {
+    id: number;
+    user: User;
+    guide: User;
+    date: string;
+    start_time: string;
+    end_time: string;
+    hours: number;
+    total_amount: number;
+    status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+    is_paid: boolean;
+    special_requests?: string;
+    review?: Review | null;
+};
+
+export type Review = {
+    id: number;
+    rating: number;
+    comment: string | null;
+    user_id: number;
+    guide_id: number;
+    booking_id: number;
+    created_at: string;
+    user?: User;
+};

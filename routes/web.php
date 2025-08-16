@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GuideAvailabilityController;
 use App\Http\Controllers\GuideController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TripController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
     Route::post('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])
         ->name('bookings.update-status');
+
+    Route::post('/bookings/{booking}/review', [ReviewController::class, 'store'])
+        ->name('bookings.review.store');
 });
 
 Route::get('guide/{user}', [GuideController::class, 'show']);

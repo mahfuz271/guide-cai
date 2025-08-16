@@ -18,14 +18,10 @@ import { GuideAvailability, SharedData, User } from '@/types';
 
 interface GuideProfileProps {
     guide: User;
+    avg_rating: number;
+    total_reviews: number;
+    total_guides: number;
     availabilities: GuideAvailability[];
-}
-
-interface Review {
-    name: string;
-    rating: number;
-    date: string;
-    comment: string;
 }
 
 interface Trip {
@@ -36,7 +32,7 @@ interface Trip {
     popular?: boolean;
 }
 
-const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) => {
+const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_rating, total_reviews, total_guides }) => {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user && auth.user.role === 'admin';
     const getInitials = useInitials();
@@ -122,31 +118,8 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) =>
         );
     }
 
+    const reviews = guide.reviews || [];
     const profile = guide.guide_profile || {};
-
-    const reviews: Review[] = [
-        {
-            name: 'Sarah Johnson',
-            rating: 5,
-            date: '2 weeks ago',
-            comment:
-                'Yuki was absolutely amazing! She took us to hidden temples I never would have found on my own. Her knowledge of Japanese culture is incredible and she speaks perfect English. Highly recommend!',
-        },
-        {
-            name: 'Marcus Weber',
-            rating: 5,
-            date: '1 month ago',
-            comment:
-                "Best guide experience I've ever had. Yuki customized our tour based on our interests and showed us authentic local spots. The tea ceremony was unforgettable!",
-        },
-        {
-            name: 'Lisa Chen',
-            rating: 4,
-            date: '2 months ago',
-            comment:
-                'Great cultural insights and very professional. Yuki helped us understand the history behind every place we visited. Only wish the tour was longer!',
-        },
-    ];
 
     const trips: Trip[] = [
         {
@@ -217,22 +190,22 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) =>
                                         </div>
 
                                         <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-                                            <div className="text-center">
-                                                <div className="mb-1 flex items-center justify-center gap-1">
+                                            <div className="text-left">
+                                                <div className="mb-1 flex items-center justify-start gap-1">
                                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                                    <span className="font-semibold">{profile.rating ?? 0}</span>
+                                                    <span className="font-semibold">{avg_rating > 0 ? Number(avg_rating).toFixed(1) : 0}</span>
                                                 </div>
-                                                <p className="text-muted-foreground text-xs">{profile.reviews_count ?? 0} reviews</p>
+                                                <p className="text-muted-foreground text-xs">{total_reviews ?? 0} reviews</p>
                                             </div>
-                                            <div className="text-center">
-                                                <div className="mb-1 font-semibold">{profile.total_guides ?? 0}</div>
+                                            <div className="text-left">
+                                                <div className="mb-1 font-semibold">{total_guides ?? 0}</div>
                                                 <p className="text-muted-foreground text-xs">tours completed</p>
                                             </div>
-                                            <div className="text-center">
+                                            <div className="text-left">
                                                 <div className="mb-1 font-semibold">{profile.response_time ?? '-'}</div>
                                                 <p className="text-muted-foreground text-xs">response time</p>
                                             </div>
-                                            <div className="text-center">
+                                            <div className="text-left">
                                                 <div className="mb-1 font-semibold">{profile.booking_rate ?? 0}%</div>
                                                 <p className="text-muted-foreground text-xs">booking rate</p>
                                             </div>
@@ -318,12 +291,14 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities }) =>
                                             <CardContent className="p-6">
                                                 <div className="mb-3 flex items-start justify-between">
                                                     <div>
-                                                        <h4 className="font-medium">{review.name}</h4>
+                                                        <h4 className="font-medium">{review?.user?.name}</h4>
                                                         <div className="flex items-center gap-1">
                                                             {[...Array(review.rating)].map((_, i) => (
                                                                 <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                                                             ))}
-                                                            <span className="text-muted-foreground ml-1 text-sm">{review.date}</span>
+                                                            <span className="text-muted-foreground ml-1 text-sm">
+                                                                {dayjs(review.created_at).format('DD/MM/YYYY')}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>

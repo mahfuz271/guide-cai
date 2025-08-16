@@ -29,8 +29,8 @@ const GuideCard = ({ guide }: { guide: User }) => {
                 <div className="mb-3 flex items-center gap-4">
                     <div className="flex items-center gap-1">
                         <span className="text-yellow-400">★</span>
-                        <span className="text-sm font-medium">{guide.guide_profile?.rating ?? 0}</span>
-                        <span className="text-muted-foreground text-xs">({guide.guide_profile?.reviews_count ?? 0} reviews)</span>
+                        <span className="text-sm font-medium"> {guide?.avg_rating ? Number(guide.avg_rating).toFixed(1) : 0}</span>
+                        <span className="text-muted-foreground text-xs">({guide?.total_reviews ?? 0} reviews)</span>
                     </div>
                     <div className="text-primary text-sm font-semibold">${guide?.guide_profile?.hourly_rate}/hour</div>
                 </div>
@@ -50,7 +50,10 @@ const GuideCard = ({ guide }: { guide: User }) => {
                         )}
                     </div>
                     <Link href={`/guide/${guide.id}`}>
-                        <Button size="sm" className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200">
+                        <Button
+                            size="sm"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer transition-all duration-200"
+                        >
                             View Profile
                         </Button>
                     </Link>

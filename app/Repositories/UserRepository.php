@@ -13,9 +13,13 @@ class UserRepository
 
     public function searchGuides($request)
     {
-        $query = User::with('guideProfile')->where('role', UserEnum::GUIDE)->where('status', UserEnum::STATUS_ACTIVE);
+        $query = User::with('guideProfile')
+            ->where('role', UserEnum::GUIDE)
+            ->where('status', UserEnum::STATUS_ACTIVE)
+            ->withCount(['reviews as total_reviews'])
+            ->withAvg('reviews as avg_rating', 'rating');
 
-        // 🔍 Keyword search
+        // Keyword search
         if ($request->filled('search')) {
             $search = $request->search;
 
@@ -35,26 +39,26 @@ class UserRepository
             }
         }
 
-        // 📍 Location filter
+        // Location filter
         if ($request->filled('location')) {
             $query->where('location', $request->location);
         }
 
-        // 🌐 Language filter (JSON)
+        // Language filter (JSON)
         if ($request->filled('language')) {
             $language = $request->language;
-            $query->whereHas('guideProfile', fn ($q) => $q->whereJsonContains('languages', $language)
+            $query->whereHas('guideProfile', fn($q) => $q->whereJsonContains('languages', $language)
             );
         }
 
-        // 🎯 Specialty filter (JSON)
+        // Specialty filter (JSON)
         if ($request->filled('specialty')) {
             $specialty = $request->specialty;
-            $query->whereHas('guideProfile', fn ($q) => $q->whereJsonContains('specialties', $specialty)
+            $query->whereHas('guideProfile', fn($q) => $q->whereJsonContains('specialties', $specialty)
             );
         }
 
-        // 💰 Hourly rate range
+        // Hourly rate range
         if ($request->filled('min_rate') || $request->filled('max_rate')) {
             $query->whereHas('guideProfile', function ($q) use ($request) {
                 if ($request->filled('min_rate')) {
@@ -66,10 +70,10 @@ class UserRepository
             });
         }
 
-        // 🏆 Experience filter
+        // Experience filter
         if ($request->filled('experience')) {
             $experience = $request->experience;
-            $query->whereHas('guideProfile', fn ($q) => $q->where('experience', $experience)
+            $query->whereHas('guideProfile', fn($q) => $q->where('experience', $experience)
             );
         }
 
@@ -106,7 +110,7 @@ class UserRepository
             'specialties' => $data['specialties'],
         ]);
 
-        if (! empty($data['photos'])) {
+        if (!empty($data['photos'])) {
             foreach ($data['photos'] as $photo) {
                 $path = $photo->store('guide_photos', 'public');
                 $guideProfile->photos()->create(['path' => $path]);
@@ -129,10 +133,10 @@ class UserRepository
 
         if ($avatar) {
             if ($user->avatar) {
-                Storage::disk('public')->delete('avatars/'.$user->avatar);
+                Storage::disk('public')->delete('avatars/' . $user->avatar);
             }
 
-            $filename = uniqid().'.'.$avatar->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $avatar->getClientOriginalExtension();
             $avatar->storeAs('avatars', $filename, 'public');
             $user->avatar = $filename;
         }
@@ -146,7 +150,7 @@ class UserRepository
     public function deleteUser(User $user): void
     {
         if ($user->avatar) {
-            Storage::disk('public')->delete('avatars/'.$user->avatar);
+            Storage::disk('public')->delete('avatars/' . $user->avatar);
         }
 
         $user->delete();
@@ -160,7 +164,6 @@ class UserRepository
         $oldStatus = $user->status;
         $user->status = $status;
         $user->save();
-        // event(new UserStatusChanged($user, $oldStatus));
 
         return true;
     }

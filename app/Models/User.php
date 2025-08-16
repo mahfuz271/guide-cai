@@ -60,6 +60,21 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute()
     {
-        return $this->avatar ? asset('storage/avatars/'.$this->avatar) : null;
+        return $this->avatar ? asset('storage/avatars/' . $this->avatar) : null;
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'guide_id', 'id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'guide_id', 'id');
+    }
+
+    public function writtenReviews()
+    {
+        return $this->hasMany(Review::class, 'user_id', 'id');
     }
 }

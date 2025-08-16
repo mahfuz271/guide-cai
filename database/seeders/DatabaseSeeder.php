@@ -24,15 +24,14 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'),
         ]);
 
-        User::factory()->create([
+        User::factory()->user()->create([
             'name' => 'User A',
             'email' => 'user@gmail.com',
-            'role' => UserEnum::USER,
             'status' => UserEnum::STATUS_ACTIVE,
             'phone' => '01762625154',
             'password' => Hash::make('12345678'),
         ]);
 
-        $this->call(GuideSeeder::class);
+        $this->call([GuideSeeder::class, UserBookingSeeder::class]);
     }
 }

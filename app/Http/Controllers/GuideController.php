@@ -51,12 +51,25 @@ class GuideController extends Controller
 
     public function show(User $user): Response
     {
-        $user->load('guideProfile.photos');
+        $user->load([
+            'guideProfile.photos',
+            'reviews.user' => function ($query) {
+                $query->latest()->take(10);
+            },
+        ]);
+
+        $avgRating = $user->reviews()->avg('rating');
+        $totalReviews = $user->reviews()->count();
+        $totalBookings = $user->bookings()->count();
+
         $availabilities = GuideAvailability::where('guide_id', $user->id)->get();
 
         return Inertia::render('guide/single', [
             'guide' => $user,
             'availabilities' => $availabilities,
+            'avg_rating' => $avgRating,
+            'total_reviews' => $totalReviews,
+            'total_guides' => $totalBookings,
         ]);
     }
 }
