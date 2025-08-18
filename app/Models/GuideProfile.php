@@ -16,6 +16,8 @@ class GuideProfile extends Model
         'bio',
         'languages',
         'specialties',
+        'nid_front',
+        'nid_back',
     ];
 
     protected $casts = [

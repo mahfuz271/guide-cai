@@ -7,6 +7,7 @@ use App\Models\GuideAvailability;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -70,6 +71,7 @@ class GuideController extends Controller
             'avg_rating' => $avgRating,
             'total_reviews' => $totalReviews,
             'total_guides' => $totalBookings,
+            'asset_path' => Storage::url(''),
         ]);
     }
 }

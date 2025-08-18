@@ -66,13 +66,14 @@ export interface User {
 
 export interface GuideProfileData {
     title?: string;
-    response_time?: string;
     booking_rate?: number;
     languages?: string[];
     specialties?: string[];
     bio?: string;
     photos?: { full_path: string; path: string }[];
     hourly_rate?: number;
+    nid_front?: string;
+    nid_back?: string;
     [key: string]: unknown;
 }
 

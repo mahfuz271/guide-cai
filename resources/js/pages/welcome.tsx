@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,7 @@ import { LANGUAGE_OPTIONS, SPECIALTY_OPTIONS } from '@/constants/guide-options';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Clock, Compass, Globe, Heart, MapPin, Search, Star, Users } from 'lucide-react';
+import { ArrowRight, Clock, Compass, Globe, Heart, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -28,36 +27,6 @@ export default function Welcome({ locations }: WelcomeProps) {
     const [location, setLocation] = useState('');
     const [language, setLanguage] = useState('');
     const [specialty, setSpecialty] = useState('');
-
-    const featuredTrips = [
-        {
-            title: 'Tokyo Cultural Experience',
-            location: 'Tokyo, Japan',
-            duration: '7 days',
-            rating: 4.9,
-            price: '$1,299',
-            image: '/placeholder.svg',
-            tags: ['Cultural', 'Urban', 'Food'],
-        },
-        {
-            title: 'European Adventure',
-            location: 'Paris, Rome, Barcelona',
-            duration: '14 days',
-            rating: 4.8,
-            price: '$2,599',
-            image: '/placeholder.svg',
-            tags: ['Multi-city', 'History', 'Art'],
-        },
-        {
-            title: 'Bali Paradise Retreat',
-            location: 'Bali, Indonesia',
-            duration: '10 days',
-            rating: 4.9,
-            price: '$899',
-            image: '/placeholder.svg',
-            tags: ['Beach', 'Wellness', 'Nature'],
-        },
-    ];
 
     const features = [
         {
@@ -287,67 +256,6 @@ export default function Welcome({ locations }: WelcomeProps) {
                                 </Card>
                             );
                         })}
-                    </div>
-                </div>
-            </section>
-
-            {/* Featured Trips */}
-            <section className="bg-background py-20">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-12 flex items-end justify-between">
-                        <div>
-                            <h2 className="from-foreground to-primary mb-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
-                                Featured Tours
-                            </h2>
-                            <p className="text-muted-foreground max-w-2xl text-lg">Handpicked guided experiences from across the globe.</p>
-                        </div>
-                        <Link href="/explore">
-                            <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/50 cursor-pointer">
-                                View All
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                        {featuredTrips.map((trip, index) => (
-                            <Card
-                                key={index}
-                                className="border-primary/10 hover:border-primary/30 hover:shadow-elegant group cursor-pointer overflow-hidden py-0 transition-all duration-300"
-                            >
-                                <div className="from-primary/20 to-primary/5 relative aspect-video overflow-hidden bg-gradient-to-br">
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                                    <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 backdrop-blur-sm dark:bg-black/90">
-                                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                                        <span className="text-xs font-medium">{trip.rating}</span>
-                                    </div>
-                                    <div className="absolute left-4 top-4">
-                                        <Badge className="bg-primary/90 text-primary-foreground">{trip.duration}</Badge>
-                                    </div>
-                                </div>
-                                <CardContent className="p-6">
-                                    <h3 className="group-hover:text-primary mb-2 text-xl font-semibold transition-colors">{trip.title}</h3>
-                                    <div className="text-muted-foreground mb-4 flex items-center gap-1 text-sm">
-                                        <MapPin className="h-3 w-3" />
-                                        {trip.location}
-                                    </div>
-                                    <div className="mb-4 flex items-center justify-between">
-                                        <div>
-                                            <span className="text-primary text-2xl font-bold">{trip.price}</span>
-                                            <span className="text-muted-foreground ml-1 text-sm">per person</span>
-                                        </div>
-                                    </div>
-                                    <div className="mb-4 flex flex-wrap gap-1.5">
-                                        {trip.tags.map((tag) => (
-                                            <Badge key={tag} className="bg-primary/10 text-primary border-primary/20 text-xs">
-                                                {tag}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                    <Button className="bg-primary hover:bg-primary/90 w-full">Explore Trip</Button>
-                                </CardContent>
-                            </Card>
-                        ))}
                     </div>
                 </div>
             </section>

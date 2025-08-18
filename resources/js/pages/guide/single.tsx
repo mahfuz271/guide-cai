@@ -15,24 +15,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useInitials } from '@/hooks/use-initials';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { GuideAvailability, SharedData, User } from '@/types';
+import clsx from 'clsx';
 
 interface GuideProfileProps {
     guide: User;
     avg_rating: number;
     total_reviews: number;
     total_guides: number;
+    asset_path: string;
     availabilities: GuideAvailability[];
 }
 
-interface Trip {
-    title: string;
-    duration: string;
-    price: string;
-    description: string;
-    popular?: boolean;
-}
-
-const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_rating, total_reviews, total_guides }) => {
+const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_rating, total_reviews, total_guides, asset_path }) => {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user && auth.user.role === 'admin';
     const getInitials = useInitials();
@@ -121,28 +115,6 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
     const reviews = guide.reviews || [];
     const profile = guide.guide_profile || {};
 
-    const trips: Trip[] = [
-        {
-            title: 'Traditional Tokyo Cultural Experience',
-            duration: '4 hours',
-            price: '$180',
-            description: 'Explore ancient temples, participate in tea ceremony, and discover traditional crafts',
-            popular: true,
-        },
-        {
-            title: 'Hidden Temples & Gardens Tour',
-            duration: '3 hours',
-            price: '$135',
-            description: 'Visit lesser-known temples and peaceful gardens away from crowds',
-        },
-        {
-            title: 'Traditional Arts Workshop',
-            duration: '2 hours',
-            price: '$90',
-            description: 'Learn calligraphy, origami, or traditional painting with local artisans',
-        },
-    ];
-
     return (
         <AppHeaderLayout maxWidth>
             <Head title={`Guide - ${guide.name}`} />
@@ -202,11 +174,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
                                                 <p className="text-muted-foreground text-xs">tours completed</p>
                                             </div>
                                             <div className="text-left">
-                                                <div className="mb-1 font-semibold">{profile.response_time ?? '-'}</div>
-                                                <p className="text-muted-foreground text-xs">response time</p>
-                                            </div>
-                                            <div className="text-left">
-                                                <div className="mb-1 font-semibold">{profile.booking_rate ?? 0}%</div>
+                                                <div className="mb-1 font-semibold">{profile.booking_rate ?? 80}%</div>
                                                 <p className="text-muted-foreground text-xs">booking rate</p>
                                             </div>
                                         </div>
@@ -233,11 +201,11 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
                         </Card>
 
                         <Tabs defaultValue="about" className="space-y-6">
-                            <TabsList className="grid w-full grid-cols-4">
+                            <TabsList className={clsx('grid w-full', { 'grid-cols-4': isAdmin, 'grid-cols-3': !isAdmin })}>
                                 <TabsTrigger value="about">About</TabsTrigger>
-                                <TabsTrigger value="trips">Trips</TabsTrigger>
                                 <TabsTrigger value="reviews">Reviews</TabsTrigger>
                                 <TabsTrigger value="photos">Photos</TabsTrigger>
+                                {isAdmin && <TabsTrigger value="docs">Documents</TabsTrigger>}
                             </TabsList>
 
                             <TabsContent value="about">
@@ -249,39 +217,6 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
                                         <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
                                     </CardContent>
                                 </Card>
-                            </TabsContent>
-
-                            <TabsContent value="trips">
-                                <div className="space-y-4">
-                                    {trips.map((trip, index) => (
-                                        <Card key={index} className="border-primary/10">
-                                            <CardContent className="p-6">
-                                                <div className="mb-3 flex items-start justify-between">
-                                                    <div>
-                                                        <div className="mb-1 flex items-center gap-2">
-                                                            <h3 className="text-lg font-semibold">{trip.title}</h3>
-                                                            {trip.popular && (
-                                                                <Badge className="bg-primary/10 text-primary border-primary/20">Popular</Badge>
-                                                            )}
-                                                        </div>
-                                                        <div className="text-muted-foreground mb-2 flex items-center gap-4 text-sm">
-                                                            <div className="flex items-center gap-1">
-                                                                <Clock className="h-4 w-4" />
-                                                                {trip.duration}
-                                                            </div>
-                                                            <div className="flex items-center gap-1">
-                                                                <DollarSign className="h-4 w-4" />
-                                                                {trip.price}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <p className="text-muted-foreground mb-4">{trip.description}</p>
-                                                <Button variant="outline">View Details</Button>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
                             </TabsContent>
 
                             <TabsContent value="reviews">
@@ -311,13 +246,29 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
 
                             <TabsContent value="photos">
                                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                                    {guide?.guide_profile?.photos?.map((photo: { full_path: string }, index: number) => (
+                                    {profile?.photos?.map((photo: { full_path: string }, index: number) => (
                                         <div key={index} className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
                                             <img src={photo.full_path} alt={`Guide photo ${index + 1}`} className="h-full w-full object-cover" />
                                         </div>
                                     ))}
                                 </div>
                             </TabsContent>
+                            {isAdmin && (
+                                <TabsContent value="docs">
+                                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                                        {profile?.nid_front && (
+                                            <div className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
+                                                <img src={asset_path + profile?.nid_front} alt={`Guide NID`} className="h-full w-full object-cover" />
+                                            </div>
+                                        )}
+                                        {profile?.nid_back && (
+                                            <div className="border-primary/20 aspect-square overflow-hidden rounded-lg border">
+                                                <img src={asset_path + profile?.nid_back} alt={`Guide NID`} className="h-full w-full object-cover" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </TabsContent>
+                            )}
                         </Tabs>
                     </div>
 

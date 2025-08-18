@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Camera, DollarSign, LoaderCircle, User, X } from 'lucide-react';
+import { Camera, DollarSign, LoaderCircle, Upload, User, X } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
 import InputError from '@/components/layout/input-error';
@@ -25,10 +25,14 @@ type RegisterForm = {
     languages: string[];
     specialties: string[];
     experience: string;
+    nid_front: File | null;
+    nid_back: File | null;
     photos: File[];
 };
 
 export default function GuideRegister() {
+    const [nidFrontPreview, setNidFrontPreview] = useState<string>('');
+    const [nidBackPreview, setNidBackPreview] = useState<string>('');
     const [photoPreviews, setPhotoPreviews] = useState<string[]>(['', '', '', '']);
 
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
@@ -43,6 +47,8 @@ export default function GuideRegister() {
         languages: [],
         specialties: [],
         experience: '',
+        nid_front: null,
+        nid_back: null,
         photos: [null, null, null, null] as unknown as File[],
     });
 
@@ -341,7 +347,113 @@ export default function GuideRegister() {
                                         </div>
                                         <InputError message={errors.photos} className="mt-2" />
                                     </div>
+                                    {/* Identity Verification - NID Upload */}
+                                    <div className="border-t pt-6">
+                                        <h3 className="mb-4 text-lg font-semibold">Identity Verification</h3>
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                            {/* NID Front */}
+                                            <div>
+                                                <Label htmlFor="nid_front">National ID Front *</Label>
+                                                <div className="mt-2">
+                                                    {nidFrontPreview ? (
+                                                        <div className="relative h-40 w-full rounded-md border">
+                                                            <img
+                                                                src={nidFrontPreview}
+                                                                alt="NID Front Preview"
+                                                                className="h-full w-full object-contain"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setData('nid_front', null);
+                                                                    setNidFrontPreview('');
+                                                                }}
+                                                                className="absolute right-2 top-2 rounded-full bg-black/50 p-1 text-white hover:bg-black/80"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <label
+                                                            htmlFor="nid_front"
+                                                            className="hover:border-primary/50 flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300"
+                                                        >
+                                                            <Upload className="text-primary/50 mb-2 h-8 w-8" />
+                                                            <p className="text-sm font-medium">Front Side</p>
+                                                            <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                                                        </label>
+                                                    )}
+                                                    <input
+                                                        type="file"
+                                                        id="nid_front"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                setData('nid_front', file);
+                                                                setNidFrontPreview(URL.createObjectURL(file));
+                                                            }
+                                                        }}
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                </div>
+                                                <InputError message={errors.nid_front} className="mt-2" />
+                                            </div>
 
+                                            {/* NID Back */}
+                                            <div>
+                                                <Label htmlFor="nid_back">National ID Back *</Label>
+                                                <div className="mt-2">
+                                                    {nidBackPreview ? (
+                                                        <div className="relative h-40 w-full rounded-md border">
+                                                            <img
+                                                                src={nidBackPreview}
+                                                                alt="NID Back Preview"
+                                                                className="h-full w-full object-contain"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setData('nid_back', null);
+                                                                    setNidBackPreview('');
+                                                                }}
+                                                                className="absolute right-2 top-2 rounded-full bg-black/50 p-1 text-white hover:bg-black/80"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <label
+                                                            htmlFor="nid_back"
+                                                            className="hover:border-primary/50 flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300"
+                                                        >
+                                                            <Upload className="text-primary/50 mb-2 h-8 w-8" />
+                                                            <p className="text-sm font-medium">Back Side</p>
+                                                            <p className="text-xs text-gray-500">PNG, JPG up to 10MB</p>
+                                                        </label>
+                                                    )}
+                                                    <input
+                                                        type="file"
+                                                        id="nid_back"
+                                                        accept="image/*"
+                                                        className="hidden"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                setData('nid_back', file);
+                                                                setNidBackPreview(URL.createObjectURL(file));
+                                                            }
+                                                        }}
+                                                        disabled={processing}
+                                                        required
+                                                    />
+                                                </div>
+                                                <InputError message={errors.nid_back} className="mt-2" />
+                                            </div>
+                                        </div>
+                                    </div>
                                     <Button
                                         className="from-primary to-primary/50 text-primary-foreground w-full bg-gradient-to-r"
                                         disabled={processing}

@@ -60,6 +60,16 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
+                                                onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active&verified=1`)}
+                                                className="flex w-full items-center gap-1 sm:w-auto"
+                                            >
+                                                <ShieldCheck size={16} /> Approve & Verified
+                                            </Button>
+                                        )}
+                                        {user.status === 'pending' && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
                                                 onClick={() => onConfirm(`/admin/users/${user.id}/status?status=active`)}
                                                 className="flex w-full items-center gap-1 sm:w-auto"
                                             >

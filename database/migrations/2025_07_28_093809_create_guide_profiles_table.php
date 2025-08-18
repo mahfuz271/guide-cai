@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('bio');
             $table->json('languages');
             $table->json('specialties');
+            $table->string('nid_front')->nullable();
+            $table->string('nid_back')->nullable();
             $table->timestamps();
         });
     }

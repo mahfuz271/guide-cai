@@ -102,12 +102,17 @@ class UserRepository
             'location' => $data['location'] ?? null,
         ]);
 
+        $nidFrontPath = $data['nid_front']->store('nid_documents', 'public');
+        $nidBackPath = $data['nid_back']->store('nid_documents', 'public');
+
         $guideProfile = $user->guideProfile()->create([
             'hourly_rate' => $data['hourlyRate'],
             'experience' => $data['experience'],
             'bio' => $data['bio'],
             'languages' => $data['languages'],
             'specialties' => $data['specialties'],
+            'nid_front' => $nidFrontPath,
+            'nid_back' => $nidBackPath,
         ]);
 
         if (!empty($data['photos'])) {
@@ -156,15 +161,24 @@ class UserRepository
         $user->delete();
     }
 
-    public function updateStatus(User $user, string $status): bool
+    public function updateStatus(User $user, string $status, ?int $verified = null): bool
     {
-        if ($user->status == $status) {
-            return false;
-        }
-        $oldStatus = $user->status;
-        $user->status = $status;
-        $user->save();
+        $updated = false;
 
-        return true;
+        if ($user->status !== $status) {
+            $user->status = $status;
+            $updated = true;
+        }
+
+        if (!is_null($verified)) {
+            $user->verified = $verified;
+            $updated = true;
+        }
+
+        if ($updated) {
+            $user->save();
+        }
+
+        return $updated;
     }
 }

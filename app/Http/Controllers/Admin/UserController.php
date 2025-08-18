@@ -11,7 +11,8 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function __construct(protected UserRepository $userRepository) {}
+    public function __construct(protected UserRepository $userRepository)
+    {}
 
     public function showAdminUser()
     {
@@ -75,7 +76,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'You cannot change status of yourself.');
         }
 
-        $this->userRepository->updateStatus($user, $newStatus);
+        $this->userRepository->updateStatus($user, $newStatus, $request->input('verified'));
 
         return redirect()->back()->with('success', 'User status updated successfully.');
     }

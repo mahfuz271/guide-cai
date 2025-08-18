@@ -65,6 +65,8 @@ class RegisteredUserController extends Controller
             'languages.*' => 'string|max:50',
             'specialties' => 'required|array|min:1',
             'specialties.*' => 'string|max:100',
+            'nid_front' => 'required|image|max:10240',
+            'nid_back' => 'required|image|max:10240',
             'photos' => 'nullable|array|max:4',
             'photos.*' => 'nullable|image|max:2048',
         ]);
