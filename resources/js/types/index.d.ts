@@ -54,7 +54,7 @@ export interface User {
     avatar?: string;
     email_verified_at: string | null;
     status: 'active' | 'blocked' | 'pending';
-    verified?: boolean;
+    verified?: 1 | null;
     guide_profile?: GuideProfileData;
     avg_rating?: number;
     total_reviews?: number;

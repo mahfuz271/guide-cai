@@ -47,21 +47,11 @@ export function AppSidebar() {
                 href: '/admin/admin-users',
                 icon: Users,
             },
-            {
-                title: 'Marketplace Settings',
-                href: '/admin/settings',
-                icon: Settings,
-            },
         );
     }
 
     if (user?.role === 'guide') {
         mainNavItems.push(
-            {
-                title: 'My Listings',
-                href: '/guide/listings',
-                icon: Map,
-            },
             {
                 title: 'My Bookings',
                 href: '/bookings',

@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,7 +85,24 @@ const BookingsIndex: React.FC<Props> = ({ bookings }) => {
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <h3 className="font-medium">{userRole === 'guide' ? booking.user.name : booking.guide.name}</h3>
+                                                    <Avatar className="h-8 w-8">
+                                                        <AvatarImage
+                                                            src={userRole === 'guide' ? booking.user.avatar_url : booking.guide.avatar_url}
+                                                            alt={userRole === 'guide' ? booking.user.name : booking.guide.name}
+                                                        />
+                                                        <AvatarFallback>
+                                                            {userRole === 'guide'
+                                                                ? booking.user.name.charAt(0).toUpperCase()
+                                                                : booking.guide.name.charAt(0).toUpperCase()}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+
+                                                    <Link
+                                                        href={userRole === 'guide' ? '' : route('guides.show', booking.guide.id)}
+                                                        className="font-medium hover:underline"
+                                                    >
+                                                        {userRole === 'guide' ? booking.user.name : booking.guide.name}
+                                                    </Link>
                                                     {getStatusBadge(booking.status, booking.is_paid)}
                                                     {booking.is_paid ? (
                                                         <Badge className="bg-green-100 px-2 py-1 text-xs text-green-800">Paid</Badge>

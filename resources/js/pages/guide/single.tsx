@@ -146,7 +146,7 @@ const GuideProfile: React.FC<GuideProfileProps> = ({ guide, availabilities, avg_
                                             <div>
                                                 <div className="mb-1 flex items-center gap-2">
                                                     <h1 className="text-2xl font-bold">{guide.name}</h1>
-                                                    {guide?.verified && (
+                                                    {guide?.verified==1 && (
                                                         <Badge className="bg-primary/10 text-primary border-primary/20">
                                                             <Award className="mr-1 h-3 w-3" />
                                                             Verified

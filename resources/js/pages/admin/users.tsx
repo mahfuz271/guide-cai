@@ -5,6 +5,8 @@ import AppSidebarLayout from '@/layouts/app/app-sidebar-layout';
 import { confirmDialog } from '@/lib/toast';
 import { BreadcrumbItem, PaginationLink, User } from '@/types';
 import { Head, router } from '@inertiajs/react';
+import dayjs from 'dayjs';
+import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, ShieldX, Trash } from 'lucide-react';
 import React from 'react';
 
@@ -38,6 +40,7 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                             <tr>
                                 <th className="p-2 text-left font-medium">Name</th>
                                 <th className="p-2 text-left font-medium">Email</th>
+                                <th className="p-2 text-left font-medium">Status</th>
                                 <th className="p-2 text-left font-medium">Created At</th>
                                 <th className="p-2 text-right font-medium">Actions</th>
                             </tr>
@@ -47,7 +50,13 @@ const Users: React.FC<UsersProps> = ({ users, title }) => {
                                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                                     <td className="p-2">{user.name}</td>
                                     <td className="p-2">{user.email}</td>
-                                    <td className="p-2">{user.created_at}</td>
+                                    <td className="p-2">
+                                        {user.status === 'active' && <Badge className="bg-green-100 text-green-800">Active</Badge>}
+                                        {user.status === 'pending' && <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>}
+                                        {user.status === 'blocked' && <Badge className="bg-red-100 text-red-800">Blocked</Badge>}
+                                    </td>
+
+                                    <td className="p-2">{dayjs(user.created_at).format('DD/MM/YYYY')}</td>
                                     <td className="flex flex-col justify-end gap-2 p-2 sm:flex-row">
                                         {user.role === 'guide' && (
                                             <a target="_blank" href={`/guide/${user.id}`}>

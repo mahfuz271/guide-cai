@@ -49,7 +49,7 @@ const GuideCard = ({ guide }: { guide: User }) => {
                             </Badge>
                         )}
                     </div>
-                    <Link href={`/guide/${guide.id}`}>
+                    <Link href={route('guides.show', guide.id)}>
                         <Button
                             size="sm"
                             className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer transition-all duration-200"

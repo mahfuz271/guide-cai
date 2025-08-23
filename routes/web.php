@@ -1,19 +1,17 @@
 <?php
 
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuideAvailabilityController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TripController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', [GuideController::class, 'welcome'])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Guide availability
     Route::get('/guide/availability', [GuideAvailabilityController::class, 'index'])
@@ -33,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('bookings.review.store');
 });
 
-Route::get('guide/{user}', [GuideController::class, 'show']);
+Route::get('guide/{user}', [GuideController::class, 'show'])->name('guides.show');
 Route::get('guides', [GuideController::class, 'index'])->name('guides.index');
 Route::get('explore', [TripController::class, 'index']);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BookingEnum;
 use App\Enums\UserEnum;
 use App\Models\GuideAvailability;
 use App\Models\User;
@@ -61,7 +62,7 @@ class GuideController extends Controller
 
         $avgRating = $user->reviews()->avg('rating');
         $totalReviews = $user->reviews()->count();
-        $totalBookings = $user->bookings()->count();
+        $totalBookings = $user->bookings()->where("status", BookingEnum::COMPLETED)->count();
 
         $availabilities = GuideAvailability::where('guide_id', $user->id)->get();
 
